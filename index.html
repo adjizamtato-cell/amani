@@ -1,0 +1,940 @@
+<title>Amani — Family Continuity Check-In</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --paper: #F5F3EC;
+    --surface: #FDFCF8;
+    --ink: #232839;
+    --muted: #6C7086;
+    --accent: #414F8C;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #E8EAF4;
+    --gold: #B5843A;
+    --gold-soft: #F3E9D7;
+    --line: #DAD6CA;
+    --danger: #8C4141;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #16192A;
+      --surface: #1E2236;
+      --ink: #E8E6DC;
+      --muted: #9CA1B8;
+      --accent: #97A4E0;
+      --accent-ink: #141726;
+      --accent-soft: #262C48;
+      --gold: #D0A458;
+      --gold-soft: #33301F;
+      --line: #343A55;
+      --danger: #D89090;
+    }
+  }
+  :root[data-theme="light"] {
+    --paper: #F5F3EC; --surface: #FDFCF8; --ink: #232839; --muted: #6C7086;
+    --accent: #414F8C; --accent-ink: #FFFFFF; --accent-soft: #E8EAF4;
+    --gold: #B5843A; --gold-soft: #F3E9D7; --line: #DAD6CA; --danger: #8C4141;
+  }
+  :root[data-theme="dark"] {
+    --paper: #16192A; --surface: #1E2236; --ink: #E8E6DC; --muted: #9CA1B8;
+    --accent: #97A4E0; --accent-ink: #141726; --accent-soft: #262C48;
+    --gold: #D0A458; --gold-soft: #33301F; --line: #343A55; --danger: #D89090;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+  .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+  header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    max-width: 660px; margin: 0 auto; padding: 20px 20px 6px;
+  }
+  .brand { font-size: 21px; letter-spacing: 0.02em; }
+  .brand b { font-weight: 600; }
+  .hdr-right { display: flex; gap: 16px; align-items: baseline; }
+  .hdr-btn {
+    background: none; border: none; cursor: pointer; padding: 2px 4px;
+    color: var(--muted); font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .hdr-btn:hover, .hdr-btn:focus-visible { color: var(--accent); }
+  .hdr-btn[aria-pressed="true"] { color: var(--accent); border-bottom: 2px solid var(--accent); }
+
+  /* the thread */
+  .thread { max-width: 660px; margin: 8px auto 0; padding: 0 20px; }
+  .thread-line { display: flex; align-items: center; }
+  .knot {
+    width: 9px; height: 9px; border-radius: 50%; flex: none;
+    border: 1.5px solid var(--line); background: var(--paper);
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .knot.done { background: var(--gold); border-color: var(--gold); }
+  .knot.now { border-color: var(--accent); background: var(--accent-soft); }
+  .seg { flex: 1; height: 1px; background: var(--line); }
+  .seg.done { background: var(--gold); }
+
+  main { max-width: 660px; margin: 0 auto; padding: 30px 20px 40px; }
+  .screen { animation: rise 0.24s ease-out; }
+  @media (prefers-reduced-motion: reduce) { .screen { animation: none; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  h1 { font-size: 34px; line-height: 1.2; font-weight: 500; margin: 0 0 14px; text-wrap: balance; }
+  h2 { font-size: 26px; line-height: 1.25; font-weight: 500; margin: 0 0 8px; text-wrap: balance; }
+  .sub { color: var(--muted); margin: 0 0 22px; font-size: 16px; }
+  .eyebrow {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 10px;
+  }
+
+  .opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 26px; }
+  .opt {
+    text-align: left; cursor: pointer; width: 100%;
+    background: var(--surface); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 3px;
+    padding: 13px 15px; font-family: inherit; font-size: 16.5px; line-height: 1.4;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .opt:hover { border-color: var(--accent); }
+  .opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .opt.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .opt .d { display: block; color: var(--muted); font-size: 14.5px; margin-top: 2px; }
+
+  .chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 26px; }
+  @media (max-width: 480px) { .chips { grid-template-columns: repeat(2, 1fr); } }
+  .chip {
+    cursor: pointer; background: var(--surface); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 3px; padding: 12px 8px;
+    font-family: inherit; font-size: 16px; text-align: center;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .chip.sel { border-color: var(--accent); background: var(--accent-soft); }
+
+  .btnrow { display: flex; gap: 12px; align-items: center; margin-top: 6px; flex-wrap: wrap; }
+  .btn {
+    cursor: pointer; border: none; border-radius: 3px;
+    background: var(--accent); color: var(--accent-ink);
+    padding: 12px 26px; font-size: 15px; letter-spacing: 0.03em;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .btn:disabled { opacity: 0.45; cursor: default; }
+  .btn-ghost {
+    cursor: pointer; background: none; border: 1px solid var(--line); border-radius: 3px;
+    color: var(--muted); padding: 11px 18px; font-size: 15px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-ghost:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .gentle {
+    border-left: 3px solid var(--gold); background: var(--gold-soft);
+    padding: 10px 14px; margin: 0 0 22px; font-size: 15.5px; border-radius: 0 3px 3px 0;
+  }
+  .aside {
+    color: var(--muted); font-size: 14.5px; margin-top: 14px;
+    border-top: 1px solid var(--line); padding-top: 12px;
+  }
+
+  .scriptbox {
+    background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    border-radius: 0 3px 3px 0; padding: 18px 20px; margin: 20px 0 10px;
+    font-size: 17.5px; line-height: 1.65;
+  }
+  .resist { margin: 16px 0 8px; }
+  .resist .lbl {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    display: block; margin-bottom: 6px;
+  }
+
+  label.f {
+    display: block; margin-bottom: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted);
+  }
+  input[type="text"], input[type="date"], textarea {
+    display: block; width: 100%; margin-top: 6px;
+    background: var(--surface); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 3px; padding: 10px 12px;
+    font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    font-size: 16.5px;
+  }
+  input:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+  textarea { min-height: 84px; resize: vertical; }
+  .hint { font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--muted); margin-top: 4px; display: block; }
+
+  .task {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 3px;
+    padding: 20px 22px; margin: 4px 0 18px;
+  }
+  .task h3 { margin: 0 0 6px; font-size: 21px; font-weight: 500; }
+  .task p { margin: 0; color: var(--muted); }
+  .ritual { color: var(--gold); font-size: 17px; margin: 12px 0 4px; }
+
+  .sheet {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 3px;
+    padding: 28px 30px; margin: 8px 0 20px;
+  }
+  .sheet h3 { margin: 0; font-size: 24px; font-weight: 500; }
+  .sheet .date { color: var(--muted); font-size: 14px; margin: 2px 0 18px; }
+  .sheet .row { margin-bottom: 14px; }
+  .sheet .k {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 11px; letter-spacing: 0.11em; text-transform: uppercase; color: var(--gold);
+    display: block; margin-bottom: 3px;
+  }
+  .sheet .v { font-size: 16.5px; }
+  .sheet .flag { border-left: 3px solid var(--accent); padding-left: 10px; font-size: 15px; color: var(--muted); }
+  .sheet-foot { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 10px; color: var(--muted); font-size: 13.5px; }
+
+  .path { list-style: none; margin: 0 0 22px; padding: 0; }
+  .path li {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 13px 4px; border-bottom: 1px solid var(--line); font-size: 16.5px;
+  }
+  .path .pk {
+    flex: none; width: 12px; height: 12px; border-radius: 50%; margin-top: 6px;
+    border: 1.5px solid var(--line); cursor: pointer; background: var(--paper); padding: 0;
+  }
+  .path .pk.done { background: var(--gold); border-color: var(--gold); }
+  .path .pk:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .path li.done span.tx { color: var(--muted); }
+
+  footer {
+    max-width: 660px; margin: 0 auto; padding: 10px 20px 36px;
+    color: var(--muted); font-size: 13.5px; border-top: 1px solid var(--line);
+  }
+  footer .legal { margin-top: 6px; font-size: 12.5px; }
+
+  .overlay {
+    position: fixed; inset: 0; background: rgba(20, 22, 38, 0.55);
+    display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 10;
+  }
+  .overlay .card {
+    background: var(--surface); color: var(--ink); border-radius: 3px;
+    padding: 30px 34px; max-width: 380px; text-align: center; font-size: 18px;
+  }
+  .overlay .card .btn { margin-top: 18px; }
+
+  .btn.wa { background: #1FA855; color: #FFFFFF; }
+  .btn.wa:hover { filter: brightness(1.06); }
+
+  @media (max-width: 520px) {
+    body { font-size: 16px; }
+    header { padding: 14px 16px 4px; }
+    .thread { padding: 0 16px; }
+    main { padding: 22px 16px calc(30px + env(safe-area-inset-bottom)); }
+    h1 { font-size: 26px; }
+    h2 { font-size: 22px; }
+    .btnrow { flex-direction: column; align-items: stretch; }
+    .btn, .btn-ghost { width: 100%; padding: 14px; font-size: 16px; text-align: center; }
+    .opt { padding: 14px; }
+    .chip { padding: 13px 6px; font-size: 15px; }
+    .sheet { padding: 20px 18px; }
+    .scriptbox { padding: 15px 16px; font-size: 16.5px; }
+    footer { padding: 10px 16px calc(28px + env(safe-area-inset-bottom)); }
+  }
+
+  @media print {
+    header, .thread, footer, .no-print, .btnrow { display: none !important; }
+    body { background: #fff; color: #111; }
+    main { padding: 0; max-width: none; }
+    .sheet { border: none; padding: 0; background: #fff; }
+    .sheet .k { color: #555; }
+    .sheet .flag { color: #333; }
+  }
+</style>
+
+<header>
+  <div class="brand"><b>Amani</b></div>
+  <div class="hdr-right">
+    <button class="hdr-btn" id="langEn" onclick="setLang('en')">EN</button>
+    <button class="hdr-btn" id="langFr" onclick="setLang('fr')">FR</button>
+    <button class="hdr-btn" id="pauseBtn" onclick="showPause()"></button>
+  </div>
+</header>
+
+<div class="thread" aria-hidden="true"><div class="thread-line" id="thread"></div></div>
+
+<main id="app" aria-live="polite"></main>
+
+<footer>
+  <div id="footTag"></div>
+  <div class="legal" id="footLegal"></div>
+</footer>
+
+<div id="overlayHost"></div>
+
+<script>
+"use strict";
+
+/* ---------- copy ---------- */
+var T = {
+en: {
+  pause: "Pause", pausedMsg: "Saved. Everything will be here when you return.", ok: "Close",
+  begin: "Begin", back: "Back", next: "Continue", startOver: "Start over", erase: "Erase everything",
+  eraseConfirm: "Erase everything from this device?",
+  footTag: "Amani — from the Swahili for peace.",
+  footLegal: "Amani is not legal or medical advice. It helps your family get clear — then points you to the right professional at the right moment. Nothing you write here leaves this device.",
+
+  wTitle: "Make it easier for the people you love to care for each other — if life ever becomes uncertain.",
+  wLaw: "When nothing is written down, the law decides. And the law will not remember who showed up — only a page can. This is that page, begun.",
+  wSub: "A ten-minute check-in. No account. Nothing leaves this device. You can pause at any point, and nothing needs to be finished today.",
+
+  whyEyebrow: "First", whyTitle: "Why now?",
+  whySub: "There is no wrong answer — this only shapes how we go.",
+  gentleNote: "We will go gently. Nothing here needs to be finished today, and you can stop at any point.",
+  ctx: {
+    calm:    { l: "I am planning, calmly", d: "Nothing is wrong. I just want us to be ready." },
+    kids:    { l: "We have young children", d: "I want to know they would be held, no matter what." },
+    travel:  { l: "A trip is coming up", d: "I want one clear page before we go." },
+    illness: { l: "Someone is ill", d: "I want to make things gentler, not heavier." },
+    parent:  { l: "I am looking after an aging parent", d: "I do not want us to have to guess one day." },
+    loss:    { l: "We lost someone recently", d: "I am carrying what that taught me." },
+    moving:  { l: "Our life spans more than one country", d: "People, papers, or property in more than one place." }
+  },
+
+  whoEyebrow: "Second", whoTitle: "Who is in your world?", whoSub: "Choose everyone that applies.",
+  hh: {
+    partner: "My partner", children: "Children", pets: "Pets",
+    elders: "Parents or elders", faraway: "Someone far away who depends on me"
+  },
+
+  cEyebrow: "Third", cTitle: "Does your family's life sit in more than one country?",
+  cSub: "People, papers, property, status — anywhere.",
+  cYes: "Yes", cNo: "No", cList: "Which countries?", cListPh: "e.g. United States, Canada, Chad",
+  cFlag: "Good to know: the rules about who inherits differ by country, and a will written in one may not fully carry to another. Your note will keep this flag for the day you sit with a professional.",
+
+  rEyebrow: "Fourth", rTitle: "When your family faces something heavy, what works best?",
+  rSub: "This sets the language Amani will use — not what it asks.",
+  reg: {
+    direct: { l: "Straight talk", d: "Say it plainly and get to the point." },
+    gentle: { l: "Gently, one step at a time", d: "Small words, small steps, room to breathe." },
+    faith:  { l: "Through our faith", d: "What we do, we do as stewardship." },
+    story:  { l: "Through stories, around the edges", d: "The way our elders raised hard things." }
+  },
+
+  vEyebrow: "Fifth", vTitle: "What matters most to you?", vSub: "Choose up to three.",
+  val: {
+    family: "Family", faith: "Faith", dignity: "Dignity", independence: "Independence",
+    clarity: "Clarity", home: "Home", privacy: "Privacy", comfort: "Comfort", memory: "Memory"
+  },
+
+  tEyebrow: "The conversation", tTitle: "One conversation, made easier.",
+  tSub: "Choose who you would talk to first, and how they are likely to react. Amani will give you an opening in your family's own language.",
+  audLbl: "I want to talk with…",
+  aud: { partner: "My partner", parent: "A parent", sibling: "A sibling", adultchild: "My adult child", friend: "A trusted friend" },
+  reaLbl: "They will probably…",
+  rea: {
+    open: "be open to it", avoid: "avoid heavy topics", name: "say “don't speak it into existence”",
+    busy: "never have the time", emotional: "be quickly moved"
+  },
+  scriptLbl: "Your opening",
+  ifResist: "If they push back",
+  copyScript: "Copy as message", copied: "Copied.",
+  waShare: "Send on WhatsApp",
+  asyncHint: "Far apart? Send it as a message or a voice note — each person can answer in their own time. The conversation does not need one table.",
+
+  trg: {
+    calm:    "I read about a family that ended up in court because nothing was written down — the law didn't look at who had actually shown up.",
+    kids:    "I read about parents who never named anyone for their kids — a court decided instead. It stayed with me.",
+    travel:  "Before this trip, I want to do one small thing I read about — a single page that says who to call and where things are.",
+    illness: "With everything happening, I keep thinking the kindest thing we can do is make things clear for each other.",
+    parent:  "I read that families who never ask end up guessing at the worst moment. I don't want us to guess.",
+    loss:    "After what we have been through, I keep thinking about what would have made it gentler.",
+    moving:  "With our life in more than one country now, I want us to write down where everything lives."
+  },
+  rsr: {
+    direct: "Nothing is wrong. This is practical, not dark — it's so you would never have to guess or search while stressed.",
+    gentle: "Nothing is wrong, and nothing needs to be decided. I just want us to feel a little more held, whatever comes.",
+    faith:  "This isn't inviting anything in. It is stewardship — taking care of what we have been entrusted with.",
+    story:  "It's like the note our grandparents kept behind the door — who to call, where things are. I want us to have ours."
+  },
+  askWrap: "Could we take ten minutes this weekend to {ask}? Just that.",
+  pauseLine: "And if it ever feels like too much, we stop and come back another day.",
+  asks: {
+    calm:    "choose the one person we would want called first",
+    kids:    "write down two people we would trust with the kids",
+    travel:  "put who-to-call and where-things-are on one page",
+    illness: "note who should speak for us if we couldn't",
+    parent:  "write down who to call first and where the papers are",
+    loss:    "write down one thing we would want handled differently",
+    moving:  "list which country holds each important thing"
+  },
+  res: {
+    open:      "No persuasion needed — thank them, and do the ten minutes while the moment is warm.",
+    avoid:     "“We don't have to decide anything today. Ten minutes, one small thing, and we stop.”",
+    name:      "“I hear you. We don't even have to name it. Call it family protection — like insurance, or knowing who to call. Two names and one location, that's all.”",
+    busy:      "“I'll send you three short questions — answer by voice note whenever you have a minute this week.”",
+    emotional: "“It's okay if this brings things up. We go as slowly as you want — and we stop whenever you say.”"
+  },
+
+  kEyebrow: "This week", kTitle: "One small step.",
+  kSub: "Under ten minutes. That is the whole ask.",
+  task: {
+    calm:    { t: "Choose one emergency contact", d: "Pick the one person you would want called first — and tell them why you chose them." },
+    kids:    { t: "Name two trusted adults", d: "Each adult writes down two people they would trust to step in for the children — and why." },
+    travel:  { t: "Make the one-page travel note", d: "Who to call, where passports and insurance live, who has a key." },
+    illness: { t: "Ask one gentle question", d: "“If you couldn't speak for yourself for a while, who should speak for you?” Just the name." },
+    parent:  { t: "Ask about the papers", d: "Ask who should be called first, and where the important papers are kept." },
+    loss:    { t: "Write one lesson down", d: "One thing this loss taught you about what you would want handled differently. That is the whole task." },
+    moving:  { t: "Map things by country", d: "List which country holds each important thing: IDs, property papers, accounts, family documents." }
+  },
+  markDone: "Mark as done", doneRitual: "One act of care, done.",
+
+  nEyebrow: "Your page", nTitle: "The Family Protection Note",
+  nSub: "One page. Names, places, and what matters — never passwords. Print it, or send it as a message.",
+  nBy: "Prepared by (optional)", nMatters: "What matters most to me",
+  nProtect: "The people I am protecting",
+  nCall: "Who to call first", nCallPh: "A name and a phone number",
+  nSpeak: "Who can speak for me if I can't", nSpeakPh: "A name — you can decide the paperwork later",
+  nWhere: "Where the important things are",
+  nWherePh: "e.g. IDs in the grey folder at home; insurance papers with my sister Awa; property papers at the notary's office",
+  nWhereHint: "Locations only — a drawer, a folder, a person. Never passwords or codes.",
+  nCountries: "Countries in our life",
+  nStep: "My step this week", nQ: "A question for us next month",
+  nReview: "We will look at this again on",
+  nQdefault: "If either of us couldn't make decisions for a short while, who should speak for us?",
+  nQkids: "Who would we want raising the children — and have we told them?",
+  nQmoving: "Which country's rules apply to what we own — and who can tell us?",
+  print: "Print / save as PDF", copyNote: "Copy as text",
+  sheetFoot: "Made with Amani. This note is not a legal document — it is the map that makes the legal documents easy.",
+
+  pEyebrow: "When you are ready", pTitle: "The path continues.",
+  pSub: "One small act a week. No streaks, no scores — it waits for you.",
+  path: [
+    "One person — choose an emergency contact and tell them why.",
+    "One location — write down where IDs, insurance and key papers live.",
+    "One safeguard — set a recovery contact for your phone and main email. Never store passwords here.",
+    "One conversation — what would comfort and dignity mean, if life got hard for a while?",
+    "One plan — who steps in for the children, pets, or anyone who depends on you.",
+    "One professional — bring your note to a notary or lawyer. If your life spans countries, say so first."
+  ],
+  toNote: "Back to my note"
+},
+
+fr: {
+  pause: "Pause", pausedMsg: "Enregistré. Tout sera là à votre retour.", ok: "Fermer",
+  begin: "Commencer", back: "Retour", next: "Continuer", startOver: "Recommencer", erase: "Tout effacer",
+  eraseConfirm: "Tout effacer de cet appareil ?",
+  footTag: "Amani — « paix », en swahili.",
+  footLegal: "Amani ne remplace pas un avis juridique ou médical. Il aide votre famille à y voir clair — puis vous oriente vers le bon professionnel au bon moment. Rien de ce que vous écrivez ici ne quitte cet appareil.",
+
+  wTitle: "Rendez les choses plus douces pour ceux que vous aimez — si la vie devient incertaine.",
+  wLaw: "Quand rien n'est écrit, c'est la loi qui décide. Et la loi ne se souvient pas de qui était présent — seule une page s'en souvient. Voici cette page, commencée.",
+  wSub: "Un point de dix minutes. Sans compte. Rien ne quitte cet appareil. Vous pouvez faire une pause à tout moment, et rien ne doit être terminé aujourd'hui.",
+
+  whyEyebrow: "D'abord", whyTitle: "Pourquoi maintenant ?",
+  whySub: "Il n'y a pas de mauvaise réponse — cela ajuste simplement le chemin.",
+  gentleNote: "Nous irons doucement. Rien ici ne doit être terminé aujourd'hui, et vous pouvez vous arrêter à tout moment.",
+  ctx: {
+    calm:    { l: "Je planifie, calmement", d: "Rien de grave. Je veux juste que nous soyons prêts." },
+    kids:    { l: "Nous avons de jeunes enfants", d: "Je veux savoir qu'ils seraient entourés, quoi qu'il arrive." },
+    travel:  { l: "Un voyage approche", d: "Je veux une page claire avant de partir." },
+    illness: { l: "Quelqu'un est malade", d: "Je veux rendre les choses plus douces, pas plus lourdes." },
+    parent:  { l: "J'accompagne un parent qui vieillit", d: "Je ne veux pas qu'on ait à deviner un jour." },
+    loss:    { l: "Nous avons perdu quelqu'un récemment", d: "Je porte ce que cela m'a appris." },
+    moving:  { l: "Notre vie s'étend sur plusieurs pays", d: "Des personnes, des papiers ou des biens en plusieurs endroits." }
+  },
+
+  whoEyebrow: "Ensuite", whoTitle: "Qui fait partie de votre monde ?", whoSub: "Choisissez tout ce qui s'applique.",
+  hh: {
+    partner: "Mon / ma partenaire", children: "Des enfants", pets: "Des animaux",
+    elders: "Des parents ou des aînés", faraway: "Quelqu'un au loin qui dépend de moi"
+  },
+
+  cEyebrow: "Puis", cTitle: "Votre vie familiale s'étend-elle sur plusieurs pays ?",
+  cSub: "Personnes, papiers, biens, statuts — où que ce soit.",
+  cYes: "Oui", cNo: "Non", cList: "Lesquels ?", cListPh: "ex. États-Unis, Canada, Tchad",
+  cFlag: "Bon à savoir : les règles d'héritage varient d'un pays à l'autre, et un testament rédigé dans l'un peut ne pas s'appliquer pleinement dans l'autre. Votre note gardera ce repère pour le jour où vous verrez un professionnel.",
+
+  rEyebrow: "Ensuite", rTitle: "Quand votre famille traverse quelque chose de lourd, qu'est-ce qui marche le mieux ?",
+  rSub: "Cela règle le langage qu'Amani utilisera — pas ce qu'il demande.",
+  reg: {
+    direct: { l: "Parler franchement", d: "Dire les choses simplement et aller à l'essentiel." },
+    gentle: { l: "Doucement, une étape à la fois", d: "Des petits mots, des petits pas, de l'air." },
+    faith:  { l: "À travers notre foi", d: "Ce que nous faisons, nous le faisons en bons intendants." },
+    story:  { l: "Par les histoires, sans brusquer", d: "Comme nos aînés abordaient les choses difficiles." }
+  },
+
+  vEyebrow: "Puis", vTitle: "Qu'est-ce qui compte le plus pour vous ?", vSub: "Choisissez-en jusqu'à trois.",
+  val: {
+    family: "La famille", faith: "La foi", dignity: "La dignité", independence: "L'indépendance",
+    clarity: "La clarté", home: "Le foyer", privacy: "L'intimité", comfort: "Le confort", memory: "La mémoire"
+  },
+
+  tEyebrow: "La conversation", tTitle: "Une conversation, rendue plus simple.",
+  tSub: "Choisissez à qui parler d'abord, et sa réaction probable. Amani vous donnera une ouverture dans la langue de votre famille.",
+  audLbl: "Je veux parler avec…",
+  aud: { partner: "Mon / ma partenaire", parent: "Un parent", sibling: "Un frère ou une sœur", adultchild: "Mon enfant adulte", friend: "Un ami de confiance" },
+  reaLbl: "Il ou elle va probablement…",
+  rea: {
+    open: "être ouvert(e)", avoid: "éviter les sujets lourds", name: "dire « ne parle pas de malheur »",
+    busy: "manquer de temps", emotional: "être vite ému(e)"
+  },
+  scriptLbl: "Votre ouverture",
+  ifResist: "Si la personne résiste",
+  copyScript: "Copier en message", copied: "Copié.",
+  waShare: "Envoyer sur WhatsApp",
+  asyncHint: "Éloignés ? Envoyez-le en message ou en note vocale — chacun répond à son rythme. La conversation n'a pas besoin d'une seule table.",
+
+  trg: {
+    calm:    "J'ai lu l'histoire d'une famille qui a fini au tribunal parce que rien n'était écrit — la loi n'a pas regardé qui avait été présent.",
+    kids:    "J'ai lu que des parents n'avaient jamais désigné personne pour leurs enfants — c'est un tribunal qui a décidé. Ça m'est resté.",
+    travel:  "Avant ce voyage, je veux faire une petite chose que j'ai lue : une seule page qui dit qui appeler et où sont les choses.",
+    illness: "Avec tout ce qui se passe, je me dis que la chose la plus douce à faire, c'est de rendre tout clair entre nous.",
+    parent:  "J'ai lu que les familles qui ne demandent jamais finissent par deviner au pire moment. Je ne veux pas qu'on devine.",
+    loss:    "Après ce que nous avons traversé, je pense à ce qui aurait rendu les choses plus douces.",
+    moving:  "Avec notre vie répartie sur plusieurs pays, je veux qu'on écrive où tout se trouve."
+  },
+  rsr: {
+    direct: "Rien de grave. C'est pratique, pas sombre — c'est pour que tu n'aies jamais à deviner ou chercher dans le stress.",
+    gentle: "Rien de grave, et rien à décider. Je veux juste qu'on se sente un peu plus tenus, quoi qu'il arrive.",
+    faith:  "Ce n'est pas attirer le malheur. C'est de la bonne intendance — prendre soin de ce qui nous a été confié.",
+    story:  "C'est comme le petit papier que nos grands-parents gardaient derrière la porte — qui appeler, où sont les choses. Je veux qu'on ait le nôtre."
+  },
+  askWrap: "Est-ce qu'on peut prendre dix minutes ce week-end pour {ask} ? Juste ça.",
+  pauseLine: "Et si ça devient trop, on s'arrête et on y revient un autre jour.",
+  asks: {
+    calm:    "choisir la personne qu'on voudrait qu'on appelle en premier",
+    kids:    "noter deux personnes à qui on confierait les enfants",
+    travel:  "mettre sur une page qui appeler et où sont les choses",
+    illness: "noter qui parlerait pour nous si on ne pouvait pas",
+    parent:  "noter qui appeler en premier et où sont les papiers",
+    loss:    "écrire une chose qu'on voudrait gérée autrement",
+    moving:  "lister ce qui se trouve dans chaque pays"
+  },
+  res: {
+    open:      "Pas besoin de convaincre — remerciez, et faites les dix minutes pendant que le moment est doux.",
+    avoid:     "« On n'a rien à décider aujourd'hui. Dix minutes, une petite chose, et on s'arrête. »",
+    name:      "« Je t'entends. On n'a même pas besoin de le nommer. Appelons ça une protection de famille — comme une assurance, ou savoir qui appeler. Deux noms et un endroit, c'est tout. »",
+    busy:      "« Je t'envoie trois petites questions — réponds par note vocale quand tu as une minute cette semaine. »",
+    emotional: "« C'est normal si ça remue. On va aussi lentement que tu veux — et on s'arrête quand tu le dis. »"
+  },
+
+  kEyebrow: "Cette semaine", kTitle: "Un petit pas.",
+  kSub: "Moins de dix minutes. C'est tout ce qui est demandé.",
+  task: {
+    calm:    { t: "Choisir un contact d'urgence", d: "Choisissez la personne que vous voudriez qu'on appelle en premier — et dites-lui pourquoi vous l'avez choisie." },
+    kids:    { t: "Nommer deux adultes de confiance", d: "Chaque adulte note deux personnes à qui il confierait les enfants — et pourquoi." },
+    travel:  { t: "Faire la note de voyage d'une page", d: "Qui appeler, où sont passeports et assurances, qui a une clé." },
+    illness: { t: "Poser une question douce", d: "« Si tu ne pouvais pas parler pour toi pendant un temps, qui devrait parler pour toi ? » Juste le nom." },
+    parent:  { t: "Demander où sont les papiers", d: "Demandez qui appeler en premier, et où sont gardés les papiers importants." },
+    loss:    { t: "Écrire une leçon", d: "Une chose que cette perte vous a apprise sur ce que vous voudriez gérer autrement. C'est toute la tâche." },
+    moving:  { t: "Cartographier par pays", d: "Listez ce qui se trouve dans chaque pays : pièces d'identité, titres de propriété, comptes, papiers de famille." }
+  },
+  markDone: "Marquer comme fait", doneRitual: "Un geste de soin, accompli.",
+
+  nEyebrow: "Votre page", nTitle: "La Note de Protection Familiale",
+  nSub: "Une page. Des noms, des endroits, et ce qui compte — jamais de mots de passe. Imprimez-la, ou envoyez-la en message.",
+  nBy: "Préparé par (facultatif)", nMatters: "Ce qui compte le plus pour moi",
+  nProtect: "Les personnes que je protège",
+  nCall: "Qui appeler en premier", nCallPh: "Un nom et un numéro",
+  nSpeak: "Qui peut parler pour moi si je ne peux pas", nSpeakPh: "Un nom — les papiers viendront plus tard",
+  nWhere: "Où se trouvent les choses importantes",
+  nWherePh: "ex. pièces d'identité dans le classeur gris ; assurances chez ma sœur Awa ; titres de propriété chez le notaire",
+  nWhereHint: "Des emplacements seulement — un tiroir, un dossier, une personne. Jamais de mots de passe ni de codes.",
+  nCountries: "Les pays de notre vie",
+  nStep: "Mon pas de cette semaine", nQ: "Une question pour le mois prochain",
+  nReview: "Nous y reviendrons le",
+  nQdefault: "Si l'un de nous ne pouvait pas décider pendant un temps, qui parlerait pour nous ?",
+  nQkids: "Qui voudrions-nous pour élever les enfants — et le leur avons-nous dit ?",
+  nQmoving: "Les règles de quel pays s'appliquent à ce que nous possédons — et qui peut nous le dire ?",
+  print: "Imprimer / PDF", copyNote: "Copier en texte",
+  sheetFoot: "Fait avec Amani. Cette note n'est pas un document légal — c'est la carte qui rend les documents légaux faciles.",
+
+  pEyebrow: "Quand vous serez prêts", pTitle: "Le chemin continue.",
+  pSub: "Un petit geste par semaine. Pas de séries, pas de scores — il vous attend.",
+  path: [
+    "Une personne — choisir un contact d'urgence et lui dire pourquoi.",
+    "Un endroit — noter où se trouvent pièces d'identité, assurances et papiers clés.",
+    "Une sécurité — définir un contact de récupération pour votre téléphone et votre e-mail principal. Jamais de mots de passe ici.",
+    "Une conversation — que voudraient dire confort et dignité, si la vie devenait dure un temps ?",
+    "Un plan — qui prend le relais pour les enfants, les animaux, ou ceux qui dépendent de vous.",
+    "Un professionnel — apportez votre note à un notaire ou un avocat. Si votre vie s'étend sur plusieurs pays, dites-le d'abord."
+  ],
+  toNote: "Revenir à ma note"
+}
+};
+
+/* ---------- state ---------- */
+var ORDER = ["welcome","context","household","countries","register","values","talk","week","note","path"];
+var GENTLE = { loss: true, illness: true };
+
+var state = load() || {
+  lang: "en", screen: "welcome",
+  context: null, household: [], multi: null, countries: "",
+  register: null, values: [],
+  audience: null, reaction: null,
+  weekDone: false,
+  note: { by: "", call: "", speak: "", where: "" },
+  review: "", pathDone: [false, false, false, false, false, false]
+};
+
+function load() {
+  try {
+    var raw = localStorage.getItem("amani-v1");
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function save() {
+  try { localStorage.setItem("amani-v1", JSON.stringify(state)); } catch (e) {}
+}
+function t() { return T[state.lang]; }
+function esc(s) {
+  return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/* ---------- navigation ---------- */
+function go(screen) { state.screen = screen; save(); render(); window.scrollTo(0, 0); }
+function next() { var i = ORDER.indexOf(state.screen); if (i < ORDER.length - 1) go(ORDER[i + 1]); }
+function back() { var i = ORDER.indexOf(state.screen); if (i > 0) go(ORDER[i - 1]); }
+function setLang(l) { state.lang = l; save(); render(); }
+
+/* ---------- selections ---------- */
+function pickContext(c) { state.context = c; save(); render(); }
+function toggleHH(h) {
+  var i = state.household.indexOf(h);
+  if (i >= 0) state.household.splice(i, 1); else state.household.push(h);
+  save(); render();
+}
+function pickMulti(v) { state.multi = v; save(); render(); }
+function setCountries(v) { state.countries = v; save(); }
+function pickRegister(r) { state.register = r; save(); render(); }
+function toggleVal(v) {
+  var i = state.values.indexOf(v);
+  if (i >= 0) state.values.splice(i, 1);
+  else if (state.values.length < 3) state.values.push(v);
+  save(); render();
+}
+function pickAud(a) { state.audience = a; save(); render(); }
+function pickRea(r) { state.reaction = r; save(); render(); }
+function markWeekDone() { state.weekDone = true; state.pathDone[0] = true; save(); render(); }
+function togglePath(i) { state.pathDone[i] = !state.pathDone[i]; save(); render(); }
+function setNote(k, v) { state.note[k] = v; save(); }
+function setReview(v) { state.review = v; save(); }
+
+function startOver() { go("welcome"); }
+function eraseAll() {
+  if (confirm(t().eraseConfirm)) {
+    try { localStorage.removeItem("amani-v1"); } catch (e) {}
+    location.reload();
+  }
+}
+
+/* ---------- script builder (deterministic, no network) ---------- */
+function buildScript() {
+  var L = t();
+  var ctx = state.context || "calm";
+  var reg = state.register || "gentle";
+  var parts = [
+    L.trg[ctx],
+    L.rsr[reg],
+    L.askWrap.replace("{ask}", L.asks[ctx]),
+    L.pauseLine
+  ];
+  return parts.join(" ");
+}
+function nextQuestion() {
+  var L = t();
+  if (state.context === "kids") return L.nQkids;
+  if (state.context === "moving") return L.nQmoving;
+  return L.nQdefault;
+}
+function noteAsText() {
+  var L = t();
+  var lines = [];
+  lines.push("— " + L.nTitle + " —");
+  if (state.note.by) lines.push(L.nBy.replace(/ \(.*\)/, "") + ": " + state.note.by);
+  lines.push(L.nMatters + ": " + state.values.map(function (v) { return L.val[v]; }).join(", "));
+  if (state.household.length) lines.push(L.nProtect + ": " + state.household.map(function (h) { return L.hh[h]; }).join(", "));
+  if (state.note.call) lines.push(L.nCall + ": " + state.note.call);
+  if (state.note.speak) lines.push(L.nSpeak + ": " + state.note.speak);
+  if (state.note.where) lines.push(L.nWhere + ": " + state.note.where);
+  if (state.multi === "yes" && state.countries) lines.push(L.nCountries + ": " + state.countries + " — " + L.cFlag);
+  lines.push(L.nStep + ": " + L.task[state.context || "calm"].t + (state.weekDone ? " ✓" : ""));
+  lines.push(L.nQ + ": " + nextQuestion());
+  if (state.review) lines.push(L.nReview + " " + state.review);
+  lines.push(L.sheetFoot);
+  return lines.join("\n");
+}
+function copyText(txt, btnId) {
+  function done() {
+    var b = document.getElementById(btnId);
+    if (b) { b.textContent = t().copied; setTimeout(render, 1200); }
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(done, done);
+  } else {
+    var ta = document.createElement("textarea");
+    ta.value = txt; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta); done();
+  }
+}
+function copyScript() { copyText(buildScript(), "copyScriptBtn"); }
+function copyNote() { copyText(noteAsText(), "copyNoteBtn"); }
+function shareWA(kind) {
+  var txt = kind === "note" ? noteAsText() : buildScript();
+  window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
+}
+
+/* ---------- pause ---------- */
+function showPause() {
+  save();
+  var host = document.getElementById("overlayHost");
+  host.innerHTML =
+    '<div class="overlay" role="dialog" aria-modal="true">' +
+    '<div class="card">' + esc(t().pausedMsg) +
+    '<div><button class="btn" onclick="hidePause()">' + esc(t().ok) + "</button></div>" +
+    "</div></div>";
+}
+function hidePause() { document.getElementById("overlayHost").innerHTML = ""; }
+
+/* ---------- render helpers ---------- */
+function optBtn(sel, onclick, label, desc) {
+  return '<button class="opt' + (sel ? " sel" : "") + '" onclick="' + onclick + '">' +
+    esc(label) + (desc ? '<span class="d">' + esc(desc) + "</span>" : "") + "</button>";
+}
+function navRow(nextEnabled, extra) {
+  var L = t();
+  var h = '<div class="btnrow no-print">';
+  h += '<button class="btn-ghost" onclick="back()">' + esc(L.back) + "</button>";
+  h += '<button class="btn" onclick="next()"' + (nextEnabled ? "" : " disabled") + ">" + esc(L.next) + "</button>";
+  if (extra) h += extra;
+  h += "</div>";
+  return h;
+}
+
+/* ---------- screens ---------- */
+function sWelcome() {
+  var L = t();
+  return '<div class="screen">' +
+    "<h1>" + esc(L.wTitle) + "</h1>" +
+    '<p style="font-size:18px">' + esc(L.wLaw) + "</p>" +
+    '<p class="sub">' + esc(L.wSub) + "</p>" +
+    '<div class="btnrow"><button class="btn" onclick="next()">' + esc(L.begin) + "</button>" +
+    '<button class="btn-ghost" onclick="eraseAll()">' + esc(L.erase) + "</button></div>" +
+    "</div>";
+}
+
+function sContext() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.whyEyebrow) + "</div><h2>" + esc(L.whyTitle) + "</h2>";
+  h += '<p class="sub">' + esc(L.whySub) + "</p>";
+  h += '<div class="opts">';
+  for (var k in L.ctx) {
+    h += optBtn(state.context === k, "pickContext('" + k + "')", L.ctx[k].l, L.ctx[k].d);
+  }
+  h += "</div>";
+  if (state.context && GENTLE[state.context]) h += '<div class="gentle">' + esc(L.gentleNote) + "</div>";
+  h += navRow(!!state.context) + "</div>";
+  return h;
+}
+
+function sHousehold() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.whoEyebrow) + "</div><h2>" + esc(L.whoTitle) + "</h2>";
+  h += '<p class="sub">' + esc(L.whoSub) + "</p><div class=\"opts\">";
+  for (var k in L.hh) {
+    h += optBtn(state.household.indexOf(k) >= 0, "toggleHH('" + k + "')", L.hh[k], null);
+  }
+  h += "</div>" + navRow(true) + "</div>";
+  return h;
+}
+
+function sCountries() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.cEyebrow) + "</div><h2>" + esc(L.cTitle) + "</h2>";
+  h += '<p class="sub">' + esc(L.cSub) + "</p><div class=\"opts\">";
+  h += optBtn(state.multi === "yes", "pickMulti('yes')", L.cYes, null);
+  h += optBtn(state.multi === "no", "pickMulti('no')", L.cNo, null);
+  h += "</div>";
+  if (state.multi === "yes") {
+    h += '<label class="f">' + esc(L.cList) +
+      '<input type="text" value="' + esc(state.countries) + '" placeholder="' + esc(L.cListPh) +
+      '" oninput="setCountries(this.value)"></label>';
+    h += '<div class="gentle">' + esc(L.cFlag) + "</div>";
+  }
+  h += navRow(!!state.multi) + "</div>";
+  return h;
+}
+
+function sRegister() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.rEyebrow) + "</div><h2>" + esc(L.rTitle) + "</h2>";
+  h += '<p class="sub">' + esc(L.rSub) + "</p><div class=\"opts\">";
+  for (var k in L.reg) {
+    h += optBtn(state.register === k, "pickRegister('" + k + "')", L.reg[k].l, L.reg[k].d);
+  }
+  h += "</div>" + navRow(!!state.register) + "</div>";
+  return h;
+}
+
+function sValues() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.vEyebrow) + "</div><h2>" + esc(L.vTitle) + "</h2>";
+  h += '<p class="sub">' + esc(L.vSub) + "</p><div class=\"chips\">";
+  for (var k in L.val) {
+    h += '<button class="chip' + (state.values.indexOf(k) >= 0 ? " sel" : "") +
+      '" onclick="toggleVal(\'' + k + "')\">" + esc(L.val[k]) + "</button>";
+  }
+  h += "</div>" + navRow(state.values.length > 0) + "</div>";
+  return h;
+}
+
+function sTalk() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.tEyebrow) + "</div><h2>" + esc(L.tTitle) + "</h2>";
+  h += '<p class="sub">' + esc(L.tSub) + "</p>";
+  h += '<label class="f">' + esc(L.audLbl) + "</label><div class=\"chips\">";
+  for (var a in L.aud) {
+    h += '<button class="chip' + (state.audience === a ? " sel" : "") +
+      '" onclick="pickAud(\'' + a + "')\">" + esc(L.aud[a]) + "</button>";
+  }
+  h += "</div>";
+  h += '<label class="f">' + esc(L.reaLbl) + "</label><div class=\"chips\">";
+  for (var r in L.rea) {
+    h += '<button class="chip' + (state.reaction === r ? " sel" : "") +
+      '" onclick="pickRea(\'' + r + "')\">" + esc(L.rea[r]) + "</button>";
+  }
+  h += "</div>";
+  if (state.audience && state.reaction) {
+    h += '<div class="resist"><span class="lbl">' + esc(L.scriptLbl) + "</span></div>";
+    h += '<div class="scriptbox">' + esc(buildScript()) + "</div>";
+    h += '<div class="resist"><span class="lbl">' + esc(L.ifResist) + "</span>" +
+      "<p style=\"margin:0\">" + esc(L.res[state.reaction]) + "</p></div>";
+    h += '<div class="btnrow no-print">' +
+      '<button class="btn wa" onclick="shareWA(\'script\')">' + esc(L.waShare) + "</button>" +
+      '<button class="btn-ghost" id="copyScriptBtn" onclick="copyScript()">' + esc(L.copyScript) + "</button></div>";
+    h += '<p class="aside">' + esc(L.asyncHint) + "</p>";
+  }
+  h += navRow(!!(state.audience && state.reaction)) + "</div>";
+  return h;
+}
+
+function sWeek() {
+  var L = t(), ctx = state.context || "calm", h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.kEyebrow) + "</div><h2>" + esc(L.kTitle) + "</h2>";
+  h += '<p class="sub">' + esc(L.kSub) + "</p>";
+  h += '<div class="task"><h3>' + esc(L.task[ctx].t) + "</h3><p>" + esc(L.task[ctx].d) + "</p>";
+  if (state.weekDone) h += '<p class="ritual">' + esc(L.doneRitual) + "</p>";
+  else h += '<div class="btnrow"><button class="btn-ghost" onclick="markWeekDone()">' + esc(L.markDone) + "</button></div>";
+  h += "</div>" + navRow(true) + "</div>";
+  return h;
+}
+
+function sNote() {
+  var L = t(), ctx = state.context || "calm", h = '<div class="screen">';
+  h += '<div class="eyebrow no-print">' + esc(L.nEyebrow) + "</div><h2 class=\"no-print\">" + esc(L.nTitle) + "</h2>";
+  h += '<p class="sub no-print">' + esc(L.nSub) + "</p>";
+
+  h += '<div class="no-print">';
+  h += '<label class="f">' + esc(L.nBy) + '<input type="text" value="' + esc(state.note.by) + '" oninput="setNote(\'by\', this.value)"></label>';
+  h += '<label class="f">' + esc(L.nCall) + '<input type="text" value="' + esc(state.note.call) + '" placeholder="' + esc(L.nCallPh) + '" oninput="setNote(\'call\', this.value)"></label>';
+  h += '<label class="f">' + esc(L.nSpeak) + '<input type="text" value="' + esc(state.note.speak) + '" placeholder="' + esc(L.nSpeakPh) + '" oninput="setNote(\'speak\', this.value)"></label>';
+  h += '<label class="f">' + esc(L.nWhere) + '<textarea placeholder="' + esc(L.nWherePh) + '" oninput="setNote(\'where\', this.value)">' + esc(state.note.where) + "</textarea>" +
+    '<span class="hint">' + esc(L.nWhereHint) + "</span></label>";
+  h += '<label class="f">' + esc(L.nReview) + '<input type="date" value="' + esc(state.review) + '" oninput="setReview(this.value)"></label>';
+  h += "</div>";
+
+  h += '<div class="sheet" id="sheet">';
+  h += "<h3>" + esc(L.nTitle) + "</h3>";
+  var dparts = [];
+  if (state.note.by) dparts.push(state.note.by);
+  dparts.push(new Date().toLocaleDateString(state.lang === "fr" ? "fr-FR" : "en-US", { year: "numeric", month: "long", day: "numeric" }));
+  h += '<div class="date">' + esc(dparts.join(" · ")) + "</div>";
+  h += '<div class="row"><span class="k">' + esc(L.nMatters) + '</span><span class="v">' +
+    esc(state.values.map(function (v) { return L.val[v]; }).join(" · ") || "—") + "</span></div>";
+  if (state.household.length) {
+    h += '<div class="row"><span class="k">' + esc(L.nProtect) + '</span><span class="v">' +
+      esc(state.household.map(function (x) { return L.hh[x]; }).join(" · ")) + "</span></div>";
+  }
+  h += '<div class="row"><span class="k">' + esc(L.nCall) + '</span><span class="v">' + esc(state.note.call || "—") + "</span></div>";
+  h += '<div class="row"><span class="k">' + esc(L.nSpeak) + '</span><span class="v">' + esc(state.note.speak || "—") + "</span></div>";
+  h += '<div class="row"><span class="k">' + esc(L.nWhere) + '</span><span class="v">' + esc(state.note.where || "—") + "</span></div>";
+  if (state.multi === "yes" && state.countries) {
+    h += '<div class="row"><span class="k">' + esc(L.nCountries) + '</span><span class="v">' + esc(state.countries) + "</span>" +
+      '<div class="flag">' + esc(L.cFlag) + "</div></div>";
+  }
+  h += '<div class="row"><span class="k">' + esc(L.nStep) + '</span><span class="v">' + esc(L.task[ctx].t) + (state.weekDone ? " ✓" : "") + "</span></div>";
+  h += '<div class="row"><span class="k">' + esc(L.nQ) + '</span><span class="v">' + esc(nextQuestion()) + "</span></div>";
+  if (state.review) h += '<div class="row"><span class="k">' + esc(L.nReview) + '</span><span class="v">' + esc(state.review) + "</span></div>";
+  h += '<div class="sheet-foot">' + esc(L.sheetFoot) + "</div>";
+  h += "</div>";
+
+  h += '<div class="btnrow no-print">';
+  h += '<button class="btn wa" onclick="shareWA(\'note\')">' + esc(L.waShare) + "</button>";
+  h += '<button class="btn-ghost" id="copyNoteBtn" onclick="copyNote()">' + esc(L.copyNote) + "</button>";
+  h += '<button class="btn-ghost" onclick="window.print()">' + esc(L.print) + "</button>";
+  h += "</div>";
+  h += '<div class="btnrow no-print">';
+  h += '<button class="btn-ghost" onclick="back()">' + esc(L.back) + "</button>";
+  h += '<button class="btn" onclick="next()">' + esc(L.next) + "</button>";
+  h += "</div></div>";
+  return h;
+}
+
+function sPath() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.pEyebrow) + "</div><h2>" + esc(L.pTitle) + "</h2>";
+  h += '<p class="sub">' + esc(L.pSub) + "</p><ol class=\"path\">";
+  for (var i = 0; i < L.path.length; i++) {
+    var done = !!state.pathDone[i];
+    h += '<li class="' + (done ? "done" : "") + '">' +
+      '<button class="pk' + (done ? " done" : "") + '" onclick="togglePath(' + i + ')" aria-label="' + esc(L.markDone) + '"></button>' +
+      '<span class="tx">' + esc(L.path[i]) + "</span></li>";
+  }
+  h += "</ol>";
+  var doneCount = state.pathDone.filter(Boolean).length;
+  if (doneCount > 0) h += '<p class="ritual">' + esc(L.doneRitual) + "</p>";
+  h += '<div class="btnrow">';
+  h += '<button class="btn-ghost" onclick="go(\'note\')">' + esc(L.toNote) + "</button>";
+  h += '<button class="btn-ghost" onclick="startOver()">' + esc(L.startOver) + "</button>";
+  h += "</div></div>";
+  return h;
+}
+
+/* ---------- render ---------- */
+var SCREENS = {
+  welcome: sWelcome, context: sContext, household: sHousehold, countries: sCountries,
+  register: sRegister, values: sValues, talk: sTalk, week: sWeek, note: sNote, path: sPath
+};
+
+function renderThread() {
+  var i = ORDER.indexOf(state.screen), h = "";
+  for (var k = 0; k < ORDER.length; k++) {
+    var cls = k < i ? "done" : (k === i ? "now" : "");
+    h += '<div class="knot ' + cls + '"></div>';
+    if (k < ORDER.length - 1) h += '<div class="seg ' + (k < i ? "done" : "") + '"></div>';
+  }
+  document.getElementById("thread").innerHTML = h;
+}
+
+function render() {
+  var L = t();
+  document.getElementById("langEn").setAttribute("aria-pressed", state.lang === "en" ? "true" : "false");
+  document.getElementById("langFr").setAttribute("aria-pressed", state.lang === "fr" ? "true" : "false");
+  document.getElementById("pauseBtn").textContent = L.pause;
+  document.getElementById("footTag").textContent = L.footTag;
+  document.getElementById("footLegal").textContent = L.footLegal;
+  document.documentElement.lang = state.lang;
+  renderThread();
+  document.getElementById("app").innerHTML = (SCREENS[state.screen] || sWelcome)();
+}
+
+render();
+</script>
