@@ -190,6 +190,11 @@
   }
   .rm { background: none; border: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 0 4px; }
   .rm:hover, .rm:focus-visible { color: var(--danger); }
+  .hubrow { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .hubstat {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 12px; color: var(--gold); white-space: nowrap;
+  }
 
   .task {
     background: var(--surface); border: 1px solid var(--line); border-radius: 3px;
@@ -443,16 +448,38 @@ en: {
   print: "Print / save as PDF", copyNote: "Copy as text",
   sheetFoot: "Made with Amani. This note is not a legal document — it is the map that makes the legal documents easy.",
 
-  pEyebrow: "When you are ready", pTitle: "The path continues.",
-  pSub: "One small act a week. No streaks, no scores — it waits for you.",
-  path: [
-    "One person — choose an emergency contact and tell them why.",
-    "One location — write down where IDs, insurance and key papers live.",
-    "One safeguard — set a recovery contact for your phone and main email. Never store passwords here.",
-    "One conversation — what would comfort and dignity mean, if life got hard for a while?",
-    "One plan — who steps in for the children, pets, or anyone who depends on you.",
-    "One professional — bring your note to a notary or lawyer. If your life spans countries, say so first."
-  ],
+  pEyebrow: "Your chapters", pTitle: "The note grows as you go.",
+  pSub: "Five chapters, ten minutes each, in any order. Everything lands on your one page — ready for the day it's needed.",
+  hub: {
+    c1: { t: "People I protect", d: "A first choice and a backup for everyone who depends on you — and whether they know." },
+    c2: { t: "Our emergency key", d: "Who can reach your phone and email if you can't — without storing a single password." },
+    c3: { t: "Our household map", d: "What exists and where the papers are." },
+    c4: { t: "What matters to me", d: "Comfort, dignity — and a few words for someone you love." },
+    c5: { t: "Keep it current", d: "A yearly rendez-vous, on your own calendar." }
+  },
+  statusNone: "Not started", entriesLbl: "entries", setLbl: "set",
+  backHub: "Back to chapters",
+  ch1Sub: "Add each person or pet who depends on you.",
+  ch1Add: "+ Add someone", ch1Who: "Who depends on you? e.g. Amina, 6",
+  ch1First: "First choice to step in", ch1Backup: "Backup (optional)",
+  ch1Told: "They know", ch1NotTold: "Not told yet",
+  ch1Hint: "Choosing is half the gift. Telling them is the other half.",
+  ch2k1: "Set a Legacy Contact on your phone",
+  ch2k1How: "iPhone: Settings → your name → Sign-In & Security → Legacy Contact. Google/Android: myaccount.google.com → Data & privacy → Inactive Account Manager.",
+  ch2k2: "Choose an email recovery person",
+  ch2k2How: "Add a trusted person as the recovery contact of your main email account — their phone number or email address.",
+  ch2Where: "Where does your recovery live?",
+  ch2WherePh: "e.g. legacy contact set for Karim; my sister holds my recovery number",
+  ch2Hint: "Never write passwords or codes here — only who, and where.",
+  ch4Q: "If life got hard for a while, what would comfort and dignity mean for you?",
+  ch4QPh: "In your own words — there is no correct answer.",
+  ch4Words: "A few words for someone", ch4To: "For whom?", ch4Text: "One honest sentence is enough.",
+  ch5Ics: "Add my review date to my calendar", ch5Mark: "Mark reviewed today", ch5Last: "Last reviewed",
+  ch5Triggers: "Worth a fresh pass after: a birth · a move · a marriage or separation · new land or property · a new country · a loss.",
+  icsSummary: "Amani — family review",
+  nGuard: "Who steps in for those I protect", nEkey: "Our emergency key",
+  nCare: "Comfort and dignity, in my words", nWords: "Words for",
+  tickTold: "told", tickNotTold: "not told yet",
   toNote: "Back to my note"
 },
 
@@ -601,16 +628,38 @@ fr: {
   print: "Imprimer / PDF", copyNote: "Copier en texte",
   sheetFoot: "Fait avec Amani. Cette note n'est pas un document légal — c'est la carte qui rend les documents légaux faciles.",
 
-  pEyebrow: "Quand vous serez prêts", pTitle: "Le chemin continue.",
-  pSub: "Un petit geste par semaine. Pas de séries, pas de scores — il vous attend.",
-  path: [
-    "Une personne — choisir un contact d'urgence et lui dire pourquoi.",
-    "Un endroit — noter où se trouvent pièces d'identité, assurances et papiers clés.",
-    "Une sécurité — définir un contact de récupération pour votre téléphone et votre e-mail principal. Jamais de mots de passe ici.",
-    "Une conversation — que voudraient dire confort et dignité, si la vie devenait dure un temps ?",
-    "Un plan — qui prend le relais pour les enfants, les animaux, ou ceux qui dépendent de vous.",
-    "Un professionnel — apportez votre note à un notaire ou un avocat. Si votre vie s'étend sur plusieurs pays, dites-le d'abord."
-  ],
+  pEyebrow: "Vos chapitres", pTitle: "La note grandit à mesure.",
+  pSub: "Cinq chapitres, dix minutes chacun, dans l'ordre que vous voulez. Tout atterrit sur votre page unique — prête pour le jour où il faudra.",
+  hub: {
+    c1: { t: "Les personnes que je protège", d: "Un premier choix et un remplaçant pour chacun de ceux qui dépendent de vous — et s'ils sont au courant." },
+    c2: { t: "Notre clé d'urgence", d: "Qui peut accéder au téléphone et aux e-mails si vous ne pouvez pas — sans le moindre mot de passe." },
+    c3: { t: "La carte du foyer", d: "Ce qui existe et où sont les papiers." },
+    c4: { t: "Ce qui compte pour moi", d: "Confort, dignité — et quelques mots pour quelqu'un que vous aimez." },
+    c5: { t: "Garder la note vivante", d: "Un rendez-vous annuel, dans votre propre calendrier." }
+  },
+  statusNone: "Pas commencé", entriesLbl: "entrées", setLbl: "fait",
+  backHub: "Retour aux chapitres",
+  ch1Sub: "Ajoutez chaque personne ou animal qui dépend de vous.",
+  ch1Add: "+ Ajouter quelqu'un", ch1Who: "Qui dépend de vous ? ex. Amina, 6 ans",
+  ch1First: "Premier choix pour prendre le relais", ch1Backup: "Remplaçant (facultatif)",
+  ch1Told: "Au courant", ch1NotTold: "Pas encore dit",
+  ch1Hint: "Choisir est la moitié du cadeau. Le leur dire est l'autre moitié.",
+  ch2k1: "Définir un contact légataire sur votre téléphone",
+  ch2k1How: "iPhone : Réglages → votre nom → Connexion et sécurité → Contact légataire. Google/Android : myaccount.google.com → Données et confidentialité → Gestionnaire de compte inactif.",
+  ch2k2: "Choisir une personne de récupération pour l'e-mail",
+  ch2k2How: "Ajoutez une personne de confiance comme contact de récupération de votre e-mail principal — son numéro ou son adresse.",
+  ch2Where: "Où vit votre récupération ?",
+  ch2WherePh: "ex. contact légataire : Karim ; ma sœur garde mon numéro de secours",
+  ch2Hint: "N'écrivez jamais de mots de passe ni de codes ici — seulement qui, et où.",
+  ch4Q: "Si la vie devenait dure un temps, que voudraient dire confort et dignité pour vous ?",
+  ch4QPh: "Avec vos mots — il n'y a pas de bonne réponse.",
+  ch4Words: "Quelques mots pour quelqu'un", ch4To: "Pour qui ?", ch4Text: "Une phrase sincère suffit.",
+  ch5Ics: "Ajouter ma date de révision à mon calendrier", ch5Mark: "Marquer comme révisé aujourd'hui", ch5Last: "Dernière révision",
+  ch5Triggers: "À refaire après : une naissance · un déménagement · un mariage ou une séparation · un terrain ou un bien nouveau · un nouveau pays · un deuil.",
+  icsSummary: "Amani — révision familiale",
+  nGuard: "Qui prend le relais pour ceux que je protège", nEkey: "Notre clé d'urgence",
+  nCare: "Confort et dignité, avec mes mots", nWords: "Des mots pour",
+  tickTold: "au courant", tickNotTold: "pas encore dit",
   toNote: "Revenir à ma note"
 }
 };
@@ -625,15 +674,22 @@ function defaultState(lang) {
     context: null, household: [], multi: null, countries: "",
     register: null, values: [],
     audience: null, reaction: null,
-    weekDone: false, assets: [],
+    weekDone: false, assets: [], guardians: [],
+    ekey: { device: false, email: false, where: "" },
+    care: "", words: { to: "", text: "" }, lastReview: "",
     note: { by: "", call: "", speak: "", where: "" },
-    review: "", pathDone: [false, false, false, false, false, false],
+    review: "",
     _resume: null
   };
 }
 
 var state = load() || defaultState("en");
 if (!state.assets) state.assets = [];
+if (!state.guardians) state.guardians = [];
+if (!state.ekey) state.ekey = { device: false, email: false, where: "" };
+if (!state.words) state.words = { to: "", text: "" };
+if (state.care === undefined) state.care = "";
+if (state.lastReview === undefined) state.lastReview = "";
 if (state.screen && state.screen !== "welcome") {
   state._resume = state.screen;
   state.screen = "welcome";
@@ -677,13 +733,38 @@ function toggleVal(v) {
 }
 function pickAud(a) { state.audience = a; save(); render(); }
 function pickRea(r) { state.reaction = r; save(); render(); }
-function markWeekDone() { state.weekDone = true; state.pathDone[0] = true; save(); render(); }
+function markWeekDone() { state.weekDone = true; save(); render(); }
 function addAsset(type) { state.assets.push({ type: type, label: "", where: "" }); save(); render(); }
 function setAsset(i, k, v) { if (state.assets[i]) { state.assets[i][k] = v; save(); } }
 function removeAsset(i) { state.assets.splice(i, 1); save(); render(); }
 function resumeFlow() { var s = state._resume; state._resume = null; go(s || "context"); }
 function freshStart() { var l = state.lang; state = defaultState(l); save(); go("context"); }
-function togglePath(i) { state.pathDone[i] = !state.pathDone[i]; save(); render(); }
+function addGuardian() { state.guardians.push({ who: "", first: "", backup: "", told: false }); save(); render(); }
+function setGuardian(i, k, v) { if (state.guardians[i]) { state.guardians[i][k] = v; save(); } }
+function toggleTold(i) { if (state.guardians[i]) { state.guardians[i].told = !state.guardians[i].told; save(); render(); } }
+function removeGuardian(i) { state.guardians.splice(i, 1); save(); render(); }
+function toggleEkey(k) { state.ekey[k] = !state.ekey[k]; save(); render(); }
+function setEkeyWhere(v) { state.ekey.where = v; save(); }
+function setCare(v) { state.care = v; save(); }
+function setWords(k, v) { state.words[k] = v; save(); }
+function markReviewedToday() { state.lastReview = new Date().toISOString().slice(0, 10); save(); render(); }
+function downloadIcs() {
+  if (!state.review) return;
+  var L = t();
+  var d = state.review.replace(/-/g, "");
+  var ics = [
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Amani//Family Review//EN",
+    "BEGIN:VEVENT", "UID:amani-review-" + d + "@amani",
+    "DTSTAMP:" + d + "T000000Z", "DTSTART;VALUE=DATE:" + d,
+    "RRULE:FREQ=YEARLY", "SUMMARY:" + L.icsSummary,
+    "END:VEVENT", "END:VCALENDAR"
+  ].join("\r\n");
+  var blob = new Blob([ics], { type: "text/calendar" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "amani-review.ics";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
 function setNote(k, v) { state.note[k] = v; save(); }
 function setReview(v) { state.review = v; save(); }
 
@@ -723,6 +804,22 @@ function noteAsText() {
   if (state.household.length) lines.push(L.nProtect + ": " + state.household.map(function (h) { return L.hh[h]; }).join(", "));
   if (state.note.call) lines.push(L.nCall + ": " + state.note.call);
   if (state.note.speak) lines.push(L.nSpeak + ": " + state.note.speak);
+  if (state.guardians.length) {
+    lines.push(L.nGuard + ":");
+    state.guardians.forEach(function (g) {
+      var s2 = "- " + (g.who || "—") + " → " + (g.first || "—");
+      if (g.backup) s2 += " (+ " + g.backup + ")";
+      s2 += " · " + (g.told ? L.tickTold + " ✓" : L.tickNotTold);
+      lines.push(s2);
+    });
+  }
+  if (state.ekey.where || state.ekey.device || state.ekey.email) {
+    var ek = [];
+    if (state.ekey.device) ek.push("✓ " + L.ch2k1);
+    if (state.ekey.email) ek.push("✓ " + L.ch2k2);
+    if (state.ekey.where) ek.push(state.ekey.where);
+    lines.push(L.nEkey + ": " + ek.join(" · "));
+  }
   if (state.note.where) lines.push(L.nWhere + ": " + state.note.where);
   if (state.assets.length) {
     lines.push(L.gNote + ":");
@@ -736,7 +833,9 @@ function noteAsText() {
   if (state.multi === "yes" && state.countries) lines.push(L.nCountries + ": " + state.countries + " — " + L.cFlag);
   lines.push(L.nStep + ": " + L.task[state.context || "calm"].t + (state.weekDone ? " ✓" : ""));
   lines.push(L.nQ + ": " + nextQuestion());
-  if (state.review) lines.push(L.nReview + " " + state.review);
+  if (state.care) lines.push(L.nCare + ": " + state.care);
+  if (state.words.text) lines.push(L.nWords + " " + (state.words.to || "…") + ": " + state.words.text);
+  if (state.review) lines.push(L.nReview + " " + state.review + (state.lastReview ? " · " + L.ch5Last + " : " + state.lastReview : ""));
   lines.push(L.sheetFoot);
   return lines.join("\n");
 }
@@ -788,6 +887,11 @@ function navRow(nextEnabled, extra) {
   h += '<p class="savedtick no-print">✓ ' + esc(L.savedTick) + "</p>";
   return h;
 }
+function hubNav() {
+  var L = t();
+  return '<div class="btnrow no-print"><button class="btn-ghost" onclick="go(\'path\')">' + esc(L.backHub) + "</button></div>" +
+    '<p class="savedtick no-print">✓ ' + esc(L.savedTick) + "</p>";
+}
 
 /* ---------- screens ---------- */
 function sWelcome() {
@@ -809,10 +913,8 @@ function sWelcome() {
     "</div>";
 }
 
-function sThings() {
-  var L = t(), h = '<div class="screen">';
-  h += '<div class="eyebrow">' + esc(L.gEyebrow) + "</div><h2>" + esc(L.gTitle) + "</h2>";
-  h += '<p class="sub">' + esc(L.gSub) + "</p>";
+function thingsBody() {
+  var L = t(), h = "";
   h += '<div class="chips">';
   for (var k in L.ast) {
     h += '<button class="chip" onclick="addAsset(\'' + k + "')\">+ " + esc(L.ast[k]) + "</button>";
@@ -832,6 +934,14 @@ function sThings() {
     h += "</div>";
   }
   h += '<p class="aside">' + esc(L.gHint) + "</p>";
+  return h;
+}
+
+function sThings() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.gEyebrow) + "</div><h2>" + esc(L.gTitle) + "</h2>";
+  h += '<p class="sub">' + esc(L.gSub) + "</p>";
+  h += thingsBody();
   h += navRow(true) + "</div>";
   return h;
 }
@@ -970,6 +1080,22 @@ function sNote() {
   }
   h += '<div class="row"><span class="k">' + esc(L.nCall) + '</span><span class="v">' + esc(state.note.call || "—") + "</span></div>";
   h += '<div class="row"><span class="k">' + esc(L.nSpeak) + '</span><span class="v">' + esc(state.note.speak || "—") + "</span></div>";
+  if (state.guardians.length) {
+    var glines = state.guardians.map(function (g) {
+      var s2 = (g.who || "—") + " → " + (g.first || "—");
+      if (g.backup) s2 += " (+ " + g.backup + ")";
+      s2 += " · " + (g.told ? L.tickTold + " ✓" : L.tickNotTold);
+      return esc(s2);
+    });
+    h += '<div class="row"><span class="k">' + esc(L.nGuard) + '</span><span class="v">' + glines.join("<br>") + "</span></div>";
+  }
+  if (state.ekey.where || state.ekey.device || state.ekey.email) {
+    var eklines = [];
+    if (state.ekey.device) eklines.push(esc("✓ " + L.ch2k1));
+    if (state.ekey.email) eklines.push(esc("✓ " + L.ch2k2));
+    if (state.ekey.where) eklines.push(esc(state.ekey.where));
+    h += '<div class="row"><span class="k">' + esc(L.nEkey) + '</span><span class="v">' + eklines.join("<br>") + "</span></div>";
+  }
   h += '<div class="row"><span class="k">' + esc(L.nWhere) + '</span><span class="v">' + esc(state.note.where || "—") + "</span></div>";
   if (state.assets.length) {
     var alines = state.assets.map(function (a) {
@@ -986,7 +1112,10 @@ function sNote() {
   }
   h += '<div class="row"><span class="k">' + esc(L.nStep) + '</span><span class="v">' + esc(L.task[ctx].t) + (state.weekDone ? " ✓" : "") + "</span></div>";
   h += '<div class="row"><span class="k">' + esc(L.nQ) + '</span><span class="v">' + esc(nextQuestion()) + "</span></div>";
-  if (state.review) h += '<div class="row"><span class="k">' + esc(L.nReview) + '</span><span class="v">' + esc(state.review) + "</span></div>";
+  if (state.care) h += '<div class="row"><span class="k">' + esc(L.nCare) + '</span><span class="v">' + esc(state.care) + "</span></div>";
+  if (state.words.text) h += '<div class="row"><span class="k">' + esc(L.nWords + " " + (state.words.to || "…")) + '</span><span class="v">' + esc(state.words.text) + "</span></div>";
+  if (state.review) h += '<div class="row"><span class="k">' + esc(L.nReview) + '</span><span class="v">' + esc(state.review) +
+    (state.lastReview ? " · " + esc(L.ch5Last) + " : " + esc(state.lastReview) : "") + "</span></div>";
   h += '<div class="sheet-foot">' + esc(L.sheetFoot) + "</div>";
   h += "</div>";
 
@@ -1002,19 +1131,32 @@ function sNote() {
   return h;
 }
 
+function chapterStatus(key) {
+  var L = t();
+  if (key === "c1") return state.guardians.length ? state.guardians.length + " " + L.entriesLbl : L.statusNone;
+  if (key === "c2") {
+    var n = (state.ekey.device ? 1 : 0) + (state.ekey.email ? 1 : 0);
+    return (n || state.ekey.where) ? n + "/2 " + L.setLbl + (state.ekey.where ? " ✓" : "") : L.statusNone;
+  }
+  if (key === "c3") return state.assets.length ? state.assets.length + " " + L.entriesLbl : L.statusNone;
+  if (key === "c4") return (state.care || state.words.text) ? "✓" : L.statusNone;
+  if (key === "c5") return state.lastReview ? (L.ch5Last + " " + state.lastReview) : (state.review || L.statusNone);
+  return "";
+}
+
 function sPath() {
   var L = t(), h = '<div class="screen">';
   h += '<div class="eyebrow">' + esc(L.pEyebrow) + "</div><h2>" + esc(L.pTitle) + "</h2>";
-  h += '<p class="sub">' + esc(L.pSub) + "</p><ol class=\"path\">";
-  for (var i = 0; i < L.path.length; i++) {
-    var done = !!state.pathDone[i];
-    h += '<li class="' + (done ? "done" : "") + '">' +
-      '<button class="pk' + (done ? " done" : "") + '" onclick="togglePath(' + i + ')" aria-label="' + esc(L.markDone) + '"></button>' +
-      '<span class="tx">' + esc(L.path[i]) + "</span></li>";
+  h += '<p class="sub">' + esc(L.pSub) + "</p>";
+  h += '<div class="opts">';
+  var defs = [["chap1", "c1"], ["chap2", "c2"], ["chap3", "c3"], ["chap4", "c4"], ["chap5", "c5"]];
+  for (var i = 0; i < defs.length; i++) {
+    var scr = defs[i][0], key = defs[i][1], c = L.hub[key];
+    h += '<button class="opt" onclick="go(\'' + scr + "')\">" +
+      '<span class="hubrow">' + esc(c.t) + '<span class="hubstat">' + esc(chapterStatus(key)) + " ›</span></span>" +
+      '<span class="d">' + esc(c.d) + "</span></button>";
   }
-  h += "</ol>";
-  var doneCount = state.pathDone.filter(Boolean).length;
-  if (doneCount > 0) h += '<p class="ritual">' + esc(L.doneRitual) + "</p>";
+  h += "</div>";
   h += '<div class="btnrow">';
   h += '<button class="btn-ghost" onclick="go(\'note\')">' + esc(L.toNote) + "</button>";
   h += '<button class="btn-ghost" onclick="startOver()">' + esc(L.startOver) + "</button>";
@@ -1022,14 +1164,97 @@ function sPath() {
   return h;
 }
 
+function sChap1() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.pEyebrow) + "</div><h2>" + esc(L.hub.c1.t) + "</h2>";
+  h += '<p class="sub">' + esc(L.ch1Sub) + "</p>";
+  h += '<div class="btnrow no-print" style="margin-bottom:16px"><button class="btn-ghost" onclick="addGuardian()">' + esc(L.ch1Add) + "</button></div>";
+  if (state.guardians.length) {
+    h += '<div class="items">';
+    for (var i = 0; i < state.guardians.length; i++) {
+      var g = state.guardians[i];
+      h += '<div class="item">';
+      h += '<div class="item-head"><span class="item-type">' + (i + 1) + "</span>" +
+        '<button class="rm" onclick="removeGuardian(' + i + ')" aria-label="' + esc(L.gRemove) + '">×</button></div>';
+      h += '<input type="text" value="' + esc(g.who) + '" placeholder="' + esc(L.ch1Who) + '" oninput="setGuardian(' + i + ",'who',this.value)\">";
+      h += '<input type="text" value="' + esc(g.first) + '" placeholder="' + esc(L.ch1First) + '" oninput="setGuardian(' + i + ",'first',this.value)\">";
+      h += '<input type="text" value="' + esc(g.backup) + '" placeholder="' + esc(L.ch1Backup) + '" oninput="setGuardian(' + i + ",'backup',this.value)\">";
+      h += '<div style="margin-top:8px"><button class="chip' + (g.told ? " sel" : "") + '" onclick="toggleTold(' + i + ')">' +
+        (g.told ? "✓ " + esc(L.ch1Told) : esc(L.ch1NotTold)) + "</button></div>";
+      h += "</div>";
+    }
+    h += "</div>";
+  }
+  h += '<p class="aside">' + esc(L.ch1Hint) + "</p>";
+  h += hubNav() + "</div>";
+  return h;
+}
+
+function sChap2() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.pEyebrow) + "</div><h2>" + esc(L.hub.c2.t) + "</h2>";
+  h += '<p class="sub">' + esc(L.hub.c2.d) + "</p>";
+  h += '<div class="opts">';
+  h += '<button class="opt' + (state.ekey.device ? " sel" : "") + '" onclick="toggleEkey(\'device\')">' +
+    (state.ekey.device ? "✓ " : "") + esc(L.ch2k1) + '<span class="d">' + esc(L.ch2k1How) + "</span></button>";
+  h += '<button class="opt' + (state.ekey.email ? " sel" : "") + '" onclick="toggleEkey(\'email\')">' +
+    (state.ekey.email ? "✓ " : "") + esc(L.ch2k2) + '<span class="d">' + esc(L.ch2k2How) + "</span></button>";
+  h += "</div>";
+  h += '<label class="f">' + esc(L.ch2Where) +
+    '<textarea placeholder="' + esc(L.ch2WherePh) + '" oninput="setEkeyWhere(this.value)">' + esc(state.ekey.where) + "</textarea>" +
+    '<span class="hint">' + esc(L.ch2Hint) + "</span></label>";
+  h += hubNav() + "</div>";
+  return h;
+}
+
+function sChap3() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.pEyebrow) + "</div><h2>" + esc(L.gTitle) + "</h2>";
+  h += '<p class="sub">' + esc(L.gSub) + "</p>";
+  h += thingsBody();
+  h += hubNav() + "</div>";
+  return h;
+}
+
+function sChap4() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.pEyebrow) + "</div><h2>" + esc(L.hub.c4.t) + "</h2>";
+  h += '<p class="sub">' + esc(L.hub.c4.d) + "</p>";
+  h += '<label class="f">' + esc(L.ch4Q) +
+    '<textarea placeholder="' + esc(L.ch4QPh) + '" oninput="setCare(this.value)">' + esc(state.care) + "</textarea></label>";
+  h += '<label class="f">' + esc(L.ch4Words) +
+    '<input type="text" value="' + esc(state.words.to) + '" placeholder="' + esc(L.ch4To) + '" oninput="setWords(\'to\',this.value)">' +
+    '<textarea placeholder="' + esc(L.ch4Text) + '" oninput="setWords(\'text\',this.value)">' + esc(state.words.text) + "</textarea></label>";
+  h += hubNav() + "</div>";
+  return h;
+}
+
+function sChap5() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.pEyebrow) + "</div><h2>" + esc(L.hub.c5.t) + "</h2>";
+  h += '<p class="sub">' + esc(L.hub.c5.d) + "</p>";
+  h += '<label class="f">' + esc(L.nReview) +
+    '<input type="date" value="' + esc(state.review) + '" oninput="setReview(this.value)"></label>';
+  h += '<div class="btnrow no-print">';
+  h += '<button class="btn" onclick="downloadIcs()"' + (state.review ? "" : " disabled") + ">" + esc(L.ch5Ics) + "</button>";
+  h += '<button class="btn-ghost" onclick="markReviewedToday()">' + esc(L.ch5Mark) + "</button>";
+  h += "</div>";
+  if (state.lastReview) h += '<p class="ritual">' + esc(L.ch5Last) + " : " + esc(state.lastReview) + " — " + esc(L.doneRitual) + "</p>";
+  h += '<p class="aside">' + esc(L.ch5Triggers) + "</p>";
+  h += hubNav() + "</div>";
+  return h;
+}
+
 /* ---------- render ---------- */
 var SCREENS = {
   welcome: sWelcome, context: sContext, household: sHousehold, countries: sCountries,
-  register: sRegister, values: sValues, talk: sTalk, week: sWeek, things: sThings, note: sNote, path: sPath
+  register: sRegister, values: sValues, talk: sTalk, week: sWeek, things: sThings, note: sNote, path: sPath,
+  chap1: sChap1, chap2: sChap2, chap3: sChap3, chap4: sChap4, chap5: sChap5
 };
 
 function renderThread() {
   var i = ORDER.indexOf(state.screen), h = "";
+  if (i < 0) i = ORDER.length - 1;
   for (var k = 0; k < ORDER.length; k++) {
     var cls = k < i ? "done" : (k === i ? "now" : "");
     h += '<div class="knot ' + cls + '"></div>';
