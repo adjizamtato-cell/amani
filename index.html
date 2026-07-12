@@ -176,6 +176,21 @@
   textarea { min-height: 84px; resize: vertical; }
   .hint { font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--muted); margin-top: 4px; display: block; }
 
+  .savedtick {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 12.5px; color: var(--muted); margin: 10px 0 0;
+  }
+  .items { display: flex; flex-direction: column; gap: 10px; margin: 4px 0 16px; }
+  .item { background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: 12px 14px; }
+  .item input { margin-top: 8px; }
+  .item-head { display: flex; justify-content: space-between; align-items: center; }
+  .item-type {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .rm { background: none; border: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 0 4px; }
+  .rm:hover, .rm:focus-visible { color: var(--danger); }
+
   .task {
     background: var(--surface); border: 1px solid var(--line); border-radius: 3px;
     padding: 20px 22px; margin: 4px 0 18px;
@@ -287,6 +302,8 @@ en: {
   pause: "Pause", pausedMsg: "Saved. Everything will be here when you return.", ok: "Close",
   begin: "Begin", back: "Back", next: "Continue", startOver: "Start over", erase: "Erase everything",
   eraseConfirm: "Erase everything from this device?",
+  resume: "Continue where you left off", fresh: "Start from the beginning",
+  savedTick: "Saved on this device",
   footTag: "Amani — from the Swahili for peace.",
   footLegal: "Amani is not legal or medical advice. It helps your family get clear — then points you to the right professional at the right moment. Nothing you write here leaves this device.",
 
@@ -395,6 +412,19 @@ en: {
   },
   markDone: "Mark as done", doneRitual: "One act of care, done.",
 
+  gEyebrow: "Your things", gTitle: "What exists — and where the papers are.",
+  gSub: "Tap to add anything that exists. A word about it, and where its papers or proof live. No amounts, no account numbers.",
+  ast: {
+    land: "Land / property", bank: "Bank account", savings: "Savings", mobile: "Mobile money",
+    shares: "Shares / investments", business: "A business", vehicle: "Vehicle",
+    insurance: "Insurance policy", owedme: "Money owed to me", iowe: "Money I owe", other: "Something else"
+  },
+  gDescPh: "What is it? e.g. the plot in Farcha · account at Ecobank",
+  gWherePh: "Where are the papers? Who knows about it?",
+  gRemove: "Remove",
+  gHint: "Why no amounts or numbers? Amounts change, and this note may travel. What your family needs on a hard day is to know a thing exists and where its proof lives — the exact figures stay with you and, one day, your professional.",
+  gNote: "What exists, and where the papers are", gPapers: "papers:",
+
   nEyebrow: "Your page", nTitle: "The Family Protection Note",
   nSub: "One page. Names, places, and what matters — never passwords. Print it, or send it as a message.",
   nBy: "Prepared by (optional)", nMatters: "What matters most to me",
@@ -430,6 +460,8 @@ fr: {
   pause: "Pause", pausedMsg: "Enregistré. Tout sera là à votre retour.", ok: "Fermer",
   begin: "Commencer", back: "Retour", next: "Continuer", startOver: "Recommencer", erase: "Tout effacer",
   eraseConfirm: "Tout effacer de cet appareil ?",
+  resume: "Reprendre où vous en étiez", fresh: "Recommencer du début",
+  savedTick: "Enregistré sur cet appareil",
   footTag: "Amani — « paix », en swahili.",
   footLegal: "Amani ne remplace pas un avis juridique ou médical. Il aide votre famille à y voir clair — puis vous oriente vers le bon professionnel au bon moment. Rien de ce que vous écrivez ici ne quitte cet appareil.",
 
@@ -538,6 +570,19 @@ fr: {
   },
   markDone: "Marquer comme fait", doneRitual: "Un geste de soin, accompli.",
 
+  gEyebrow: "Vos biens", gTitle: "Ce qui existe — et où sont les papiers.",
+  gSub: "Touchez pour ajouter ce qui existe. Un mot pour le décrire, et où se trouvent ses papiers ou sa preuve. Pas de montants, pas de numéros de compte.",
+  ast: {
+    land: "Terrain / propriété", bank: "Compte bancaire", savings: "Épargne", mobile: "Mobile money",
+    shares: "Actions / placements", business: "Une entreprise", vehicle: "Véhicule",
+    insurance: "Assurance", owedme: "On me doit de l'argent", iowe: "Je dois de l'argent", other: "Autre chose"
+  },
+  gDescPh: "De quoi s'agit-il ? ex. le terrain à Farcha · compte à Ecobank",
+  gWherePh: "Où sont les papiers ? Qui est au courant ?",
+  gRemove: "Retirer",
+  gHint: "Pourquoi ni montants ni numéros ? Les montants changent, et cette note peut voyager. Ce dont votre famille a besoin un jour difficile, c'est de savoir qu'une chose existe et où se trouve sa preuve — les chiffres exacts restent avec vous et, un jour, avec votre professionnel.",
+  gNote: "Ce qui existe, et où sont les papiers", gPapers: "papiers :",
+
   nEyebrow: "Votre page", nTitle: "La Note de Protection Familiale",
   nSub: "Une page. Des noms, des endroits, et ce qui compte — jamais de mots de passe. Imprimez-la, ou envoyez-la en message.",
   nBy: "Préparé par (facultatif)", nMatters: "Ce qui compte le plus pour moi",
@@ -571,18 +616,28 @@ fr: {
 };
 
 /* ---------- state ---------- */
-var ORDER = ["welcome","context","household","countries","register","values","talk","week","note","path"];
+var ORDER = ["welcome","context","household","countries","register","values","talk","week","things","note","path"];
 var GENTLE = { loss: true, illness: true };
 
-var state = load() || {
-  lang: "en", screen: "welcome",
-  context: null, household: [], multi: null, countries: "",
-  register: null, values: [],
-  audience: null, reaction: null,
-  weekDone: false,
-  note: { by: "", call: "", speak: "", where: "" },
-  review: "", pathDone: [false, false, false, false, false, false]
-};
+function defaultState(lang) {
+  return {
+    lang: lang || "en", screen: "welcome",
+    context: null, household: [], multi: null, countries: "",
+    register: null, values: [],
+    audience: null, reaction: null,
+    weekDone: false, assets: [],
+    note: { by: "", call: "", speak: "", where: "" },
+    review: "", pathDone: [false, false, false, false, false, false],
+    _resume: null
+  };
+}
+
+var state = load() || defaultState("en");
+if (!state.assets) state.assets = [];
+if (state.screen && state.screen !== "welcome") {
+  state._resume = state.screen;
+  state.screen = "welcome";
+}
 
 function load() {
   try {
@@ -623,6 +678,11 @@ function toggleVal(v) {
 function pickAud(a) { state.audience = a; save(); render(); }
 function pickRea(r) { state.reaction = r; save(); render(); }
 function markWeekDone() { state.weekDone = true; state.pathDone[0] = true; save(); render(); }
+function addAsset(type) { state.assets.push({ type: type, label: "", where: "" }); save(); render(); }
+function setAsset(i, k, v) { if (state.assets[i]) { state.assets[i][k] = v; save(); } }
+function removeAsset(i) { state.assets.splice(i, 1); save(); render(); }
+function resumeFlow() { var s = state._resume; state._resume = null; go(s || "context"); }
+function freshStart() { var l = state.lang; state = defaultState(l); save(); go("context"); }
 function togglePath(i) { state.pathDone[i] = !state.pathDone[i]; save(); render(); }
 function setNote(k, v) { state.note[k] = v; save(); }
 function setReview(v) { state.review = v; save(); }
@@ -664,6 +724,15 @@ function noteAsText() {
   if (state.note.call) lines.push(L.nCall + ": " + state.note.call);
   if (state.note.speak) lines.push(L.nSpeak + ": " + state.note.speak);
   if (state.note.where) lines.push(L.nWhere + ": " + state.note.where);
+  if (state.assets.length) {
+    lines.push(L.gNote + ":");
+    state.assets.forEach(function (a) {
+      var s2 = "- " + (L.ast[a.type] || a.type);
+      if (a.label) s2 += " — " + a.label;
+      if (a.where) s2 += " (" + L.gPapers + " " + a.where + ")";
+      lines.push(s2);
+    });
+  }
   if (state.multi === "yes" && state.countries) lines.push(L.nCountries + ": " + state.countries + " — " + L.cFlag);
   lines.push(L.nStep + ": " + L.task[state.context || "calm"].t + (state.weekDone ? " ✓" : ""));
   lines.push(L.nQ + ": " + nextQuestion());
@@ -716,19 +785,55 @@ function navRow(nextEnabled, extra) {
   h += '<button class="btn" onclick="next()"' + (nextEnabled ? "" : " disabled") + ">" + esc(L.next) + "</button>";
   if (extra) h += extra;
   h += "</div>";
+  h += '<p class="savedtick no-print">✓ ' + esc(L.savedTick) + "</p>";
   return h;
 }
 
 /* ---------- screens ---------- */
 function sWelcome() {
   var L = t();
+  var btns;
+  if (state._resume) {
+    btns = '<button class="btn" onclick="resumeFlow()">' + esc(L.resume) + "</button>" +
+      '<button class="btn-ghost" onclick="freshStart()">' + esc(L.fresh) + "</button>" +
+      '<button class="btn-ghost" onclick="eraseAll()">' + esc(L.erase) + "</button>";
+  } else {
+    btns = '<button class="btn" onclick="next()">' + esc(L.begin) + "</button>" +
+      '<button class="btn-ghost" onclick="eraseAll()">' + esc(L.erase) + "</button>";
+  }
   return '<div class="screen">' +
     "<h1>" + esc(L.wTitle) + "</h1>" +
     '<p style="font-size:18px">' + esc(L.wLaw) + "</p>" +
     '<p class="sub">' + esc(L.wSub) + "</p>" +
-    '<div class="btnrow"><button class="btn" onclick="next()">' + esc(L.begin) + "</button>" +
-    '<button class="btn-ghost" onclick="eraseAll()">' + esc(L.erase) + "</button></div>" +
+    '<div class="btnrow">' + btns + "</div>" +
     "</div>";
+}
+
+function sThings() {
+  var L = t(), h = '<div class="screen">';
+  h += '<div class="eyebrow">' + esc(L.gEyebrow) + "</div><h2>" + esc(L.gTitle) + "</h2>";
+  h += '<p class="sub">' + esc(L.gSub) + "</p>";
+  h += '<div class="chips">';
+  for (var k in L.ast) {
+    h += '<button class="chip" onclick="addAsset(\'' + k + "')\">+ " + esc(L.ast[k]) + "</button>";
+  }
+  h += "</div>";
+  if (state.assets.length) {
+    h += '<div class="items">';
+    for (var i = 0; i < state.assets.length; i++) {
+      var a = state.assets[i];
+      h += '<div class="item">';
+      h += '<div class="item-head"><span class="item-type">' + esc(L.ast[a.type] || a.type) + "</span>" +
+        '<button class="rm" onclick="removeAsset(' + i + ')" aria-label="' + esc(L.gRemove) + '">×</button></div>';
+      h += '<input type="text" value="' + esc(a.label) + '" placeholder="' + esc(L.gDescPh) + '" oninput="setAsset(' + i + ",'label',this.value)\">";
+      h += '<input type="text" value="' + esc(a.where) + '" placeholder="' + esc(L.gWherePh) + '" oninput="setAsset(' + i + ",'where',this.value)\">";
+      h += "</div>";
+    }
+    h += "</div>";
+  }
+  h += '<p class="aside">' + esc(L.gHint) + "</p>";
+  h += navRow(true) + "</div>";
+  return h;
 }
 
 function sContext() {
@@ -866,6 +971,15 @@ function sNote() {
   h += '<div class="row"><span class="k">' + esc(L.nCall) + '</span><span class="v">' + esc(state.note.call || "—") + "</span></div>";
   h += '<div class="row"><span class="k">' + esc(L.nSpeak) + '</span><span class="v">' + esc(state.note.speak || "—") + "</span></div>";
   h += '<div class="row"><span class="k">' + esc(L.nWhere) + '</span><span class="v">' + esc(state.note.where || "—") + "</span></div>";
+  if (state.assets.length) {
+    var alines = state.assets.map(function (a) {
+      var s2 = L.ast[a.type] || a.type;
+      if (a.label) s2 += " — " + a.label;
+      if (a.where) s2 += " (" + L.gPapers + " " + a.where + ")";
+      return esc(s2);
+    });
+    h += '<div class="row"><span class="k">' + esc(L.gNote) + '</span><span class="v">' + alines.join("<br>") + "</span></div>";
+  }
   if (state.multi === "yes" && state.countries) {
     h += '<div class="row"><span class="k">' + esc(L.nCountries) + '</span><span class="v">' + esc(state.countries) + "</span>" +
       '<div class="flag">' + esc(L.cFlag) + "</div></div>";
@@ -911,7 +1025,7 @@ function sPath() {
 /* ---------- render ---------- */
 var SCREENS = {
   welcome: sWelcome, context: sContext, household: sHousehold, countries: sCountries,
-  register: sRegister, values: sValues, talk: sTalk, week: sWeek, note: sNote, path: sPath
+  register: sRegister, values: sValues, talk: sTalk, week: sWeek, things: sThings, note: sNote, path: sPath
 };
 
 function renderThread() {
