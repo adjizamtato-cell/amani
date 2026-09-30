@@ -1,4 +1,9 @@
-<title>Amani — Family Continuity Check-In</title>
+<!doctype html>
+<meta charset="utf-8">
+<!-- Everything this page needs is inside this file. connect-src 'none' is the one that matters:
+     it is what makes "nothing you write here leaves this device" enforceable, not just a promise. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<title>AmaniNote — Family Continuity Check-In</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   :root {
@@ -55,19 +60,23 @@
   .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
   header {
-    display: flex; align-items: baseline; justify-content: space-between;
-    max-width: 660px; margin: 0 auto; padding: 20px 20px 6px;
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 660px; margin: 0 auto; padding: 8px 20px 0;
   }
   .brand { font-size: 21px; letter-spacing: 0.02em; }
   .brand b { font-weight: 600; }
-  .hdr-right { display: flex; gap: 16px; align-items: baseline; }
+  .hdr-right { display: flex; gap: 2px; align-items: center; margin-right: -10px; }
   .hdr-btn {
-    background: none; border: none; cursor: pointer; padding: 2px 4px;
+    background: none; border: none; cursor: pointer; padding: 0 10px;
+    min-width: 44px; min-height: 44px;
     color: var(--muted); font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   .hdr-btn:hover, .hdr-btn:focus-visible { color: var(--accent); }
-  .hdr-btn[aria-pressed="true"] { color: var(--accent); border-bottom: 2px solid var(--accent); }
+  .hdr-btn[aria-pressed="true"] {
+    color: var(--accent); text-decoration: underline;
+    text-decoration-thickness: 2px; text-underline-offset: 6px;
+  }
 
   /* the thread */
   .thread { max-width: 660px; margin: 8px auto 0; padding: 0 20px; }
@@ -120,6 +129,8 @@
   .chip:hover { border-color: var(--accent); }
   .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   .chip.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .chips.c3 { grid-template-columns: repeat(3, 1fr); }
+  .chips.c2 { grid-template-columns: repeat(2, 1fr); }
 
   .btnrow { display: flex; gap: 12px; align-items: center; margin-top: 6px; flex-wrap: wrap; }
   .btn {
@@ -254,7 +265,7 @@
 
   @media (max-width: 520px) {
     body { font-size: 16px; }
-    header { padding: 14px 16px 4px; }
+    header { padding: 4px 16px 0; }
     .thread { padding: 0 16px; }
     main { padding: 22px 16px calc(30px + env(safe-area-inset-bottom)); }
     h1 { font-size: 26px; }
@@ -279,7 +290,7 @@
 </style>
 
 <header>
-  <div class="brand"><b>Amani</b></div>
+  <div class="brand"><b>Amani</b>Note</div>
   <div class="hdr-right">
     <button class="hdr-btn" id="langEn" onclick="setLang('en')">EN</button>
     <button class="hdr-btn" id="langFr" onclick="setLang('fr')">FR</button>
@@ -308,8 +319,10 @@ en: {
   begin: "Begin", back: "Back", next: "Continue", startOver: "Start over", erase: "Erase everything",
   eraseConfirm: "Erase everything from this device?",
   resume: "Continue where you left off", fresh: "Start from the beginning",
+  sharedHint: "Your entries are saved on this phone — anyone who opens Amani here can see them. If you share this phone, use “Erase everything” when you are done.",
+  a2hs: "Tip: add Amani to your home screen (from your browser's Share or menu button). On iPhone, Safari can clear a site's saved data after about a week without a visit — a home-screen icon prevents that.",
   savedTick: "Saved on this device",
-  footTag: "Amani — from the Swahili for peace.",
+  footTag: "Amani: peace, in Swahili; from the Arabic amān, protection.",
   footLegal: "Amani is not legal or medical advice. It helps your family get clear — then points you to the right professional at the right moment. Nothing you write here leaves this device.",
 
   wTitle: "Make it easier for the people you love to care for each other — if life ever becomes uncertain.",
@@ -324,15 +337,15 @@ en: {
     kids:    { l: "We have young children", d: "I want to know they would be held, no matter what." },
     travel:  { l: "A trip is coming up", d: "I want one clear page before we go." },
     illness: { l: "Someone is ill", d: "I want to make things gentler, not heavier." },
-    parent:  { l: "I am looking after an aging parent", d: "I do not want us to have to guess one day." },
+    parent:  { l: "I'm caring for an ageing mother or father", d: "I do not want us to have to guess one day." },
     loss:    { l: "We lost someone recently", d: "I am carrying what that taught me." },
     moving:  { l: "Our life spans more than one country", d: "People, papers, or property in more than one place." }
   },
 
   whoEyebrow: "Second", whoTitle: "Who is in your world?", whoSub: "Choose everyone that applies.",
   hh: {
-    partner: "My partner", children: "Children", pets: "Pets",
-    elders: "Parents or elders", faraway: "Someone far away who depends on me"
+    partner: "My partner(s)", children: "Children", pets: "Pets",
+    elders: "My mother, father or elders", faraway: "Someone far away who depends on me"
   },
 
   cEyebrow: "Third", cTitle: "Does your family's life sit in more than one country?",
@@ -387,6 +400,10 @@ en: {
   },
   askWrap: "Could we take ten minutes this weekend to {ask}? Just that.",
   pauseLine: "And if it ever feels like too much, we stop and come back another day.",
+  lead: {
+    parent: "I'd like your advice on something.",
+    adultchild: "I want to make this easier for you, whatever comes."
+  },
   asks: {
     calm:    "choose the one person we would want called first",
     kids:    "write down two people we would trust with the kids",
@@ -416,6 +433,7 @@ en: {
     moving:  { t: "Map things by country", d: "List which country holds each important thing: IDs, property papers, accounts, family documents." }
   },
   markDone: "Mark as done", doneRitual: "One act of care, done.",
+  wkFill: "Want to do it now? It goes straight onto your page.",
 
   gEyebrow: "Your things", gTitle: "What exists — and where the papers are.",
   gSub: "Tap to add anything that exists. A word about it, and where its papers or proof live. No amounts, no account numbers.",
@@ -429,6 +447,16 @@ en: {
   gRemove: "Remove",
   gHint: "Why no amounts or numbers? Amounts change, and this note may travel. What your family needs on a hard day is to know a thing exists and where its proof lives — the exact figures stay with you and, one day, your professional.",
   gNote: "What exists, and where the papers are", gPapers: "papers:",
+
+  wlEyebrow: "A will", wlQ: "Have you made a will?",
+  wlYes: "Yes", wlNotYet: "Not yet", wlUnsure: "Not sure", wlNo: "No",
+  wlWhere: "Where is the original?", wlWherePh: "e.g. at the notary's office · in the family safe · with my lawyer",
+  wlHolder: "Who holds it?", wlHolderPh: "A name — or a role, like “my lawyer”",
+  wlHeirQ: "Is that person one of the heirs?",
+  wlHint: "Where it is and who has it — never what it says.",
+  wlHeirFlag: "Good to know: if the only copy is kept by one of the heirs, doubts can arise later. Many families ask a notary or lawyer to keep the original — a professional can tell you what works where you live and where your property is.",
+  wlHandoff: "Good to know: the rules for a valid will differ by country, and a mistake of form can make one invalid. A notary or lawyer can tell you what applies in your case — and your note already gathers what you will need to show them.",
+  nWill: "Will", nWillOrig: "original:", nWillHeld: "held by",
 
   nEyebrow: "Your page", nTitle: "The Family Protection Note",
   nSub: "One page. Names, places, and what matters — never passwords. Print it, or send it as a message.",
@@ -453,8 +481,8 @@ en: {
   hub: {
     c1: { t: "People I protect", d: "A first choice and a backup for everyone who depends on you — and whether they know." },
     c2: { t: "Our emergency key", d: "Who can reach your phone and email if you can't — without storing a single password." },
-    c3: { t: "Our household map", d: "What exists and where the papers are." },
-    c4: { t: "What matters to me", d: "Comfort, dignity — and a few words for someone you love." },
+    c3: { t: "Our household map", d: "What exists, where the papers are — and where a will is kept." },
+    c4: { t: "What matters to me", d: "Comfort, dignity, your wishes for the farewell — and a few words for someone you love." },
     c5: { t: "Keep it current", d: "A yearly rendez-vous, on your own calendar." }
   },
   statusNone: "Not started", entriesLbl: "entries", setLbl: "set",
@@ -474,11 +502,22 @@ en: {
   ch4Q: "If life got hard for a while, what would comfort and dignity mean for you?",
   ch4QPh: "In your own words — there is no correct answer.",
   ch4Words: "A few words for someone", ch4To: "For whom?", ch4Text: "One honest sentence is enough.",
+  ch4Farewell: "Where and how I would want to be laid to rest or remembered",
+  ch4FarewellPh: "e.g. buried in our home village, next to my mother · prayers led by my brother · my family already knows",
+  ch4FarewellHint: "Only if you want to. It helps your family most when they already know.",
   ch5Ics: "Add my review date to my calendar", ch5Mark: "Mark reviewed today", ch5Last: "Last reviewed",
   ch5Triggers: "Worth a fresh pass after: a birth · a move · a marriage or separation · new land or property · a new country · a loss.",
+  impBtn: "Restore from a backup",
+  impAsk: "Replace everything on this phone with this backup? This can't be undone.",
+  impYes: "Replace", impNo: "Cancel",
+  impBad: "That file isn't an Amani backup, or it is damaged. Nothing was changed.",
+  impBig: "That file is too large to be a backup. Nothing was changed.",
+  impDone: "Restored. Everything from your backup is back on this phone.",
+  ch5Data: "Download my data (backup)",
+  ch5DataHint: "A copy of everything you entered, saved as a file. It contains what you wrote — after saving, move it out of your Downloads folder to somewhere private.",
   icsSummary: "Amani — family review",
   nGuard: "Who steps in for those I protect", nEkey: "Our emergency key",
-  nCare: "Comfort and dignity, in my words", nWords: "Words for",
+  nCare: "Comfort and dignity, in my words", nFarewell: "My wishes for the farewell", nWords: "Words for",
   tickTold: "told", tickNotTold: "not told yet",
   toNote: "Back to my note"
 },
@@ -488,8 +527,10 @@ fr: {
   begin: "Commencer", back: "Retour", next: "Continuer", startOver: "Recommencer", erase: "Tout effacer",
   eraseConfirm: "Tout effacer de cet appareil ?",
   resume: "Reprendre où vous en étiez", fresh: "Recommencer du début",
+  sharedHint: "Vos entrées sont enregistrées sur ce téléphone — toute personne qui ouvre Amani ici peut les voir. Si vous partagez ce téléphone, utilisez « Tout effacer » quand vous avez terminé.",
+  a2hs: "Astuce : ajoutez Amani à votre écran d'accueil (bouton Partager ou menu du navigateur). Sur iPhone, Safari peut effacer les données d'un site après environ une semaine sans visite — une icône sur l'écran d'accueil l'évite.",
   savedTick: "Enregistré sur cet appareil",
-  footTag: "Amani — « paix », en swahili.",
+  footTag: "Amani : la paix, en swahili ; de l'arabe amān, la protection.",
   footLegal: "Amani ne remplace pas un avis juridique ou médical. Il aide votre famille à y voir clair — puis vous oriente vers le bon professionnel au bon moment. Rien de ce que vous écrivez ici ne quitte cet appareil.",
 
   wTitle: "Rendez les choses plus douces pour ceux que vous aimez — si la vie devient incertaine.",
@@ -504,15 +545,15 @@ fr: {
     kids:    { l: "Nous avons de jeunes enfants", d: "Je veux savoir qu'ils seraient entourés, quoi qu'il arrive." },
     travel:  { l: "Un voyage approche", d: "Je veux une page claire avant de partir." },
     illness: { l: "Quelqu'un est malade", d: "Je veux rendre les choses plus douces, pas plus lourdes." },
-    parent:  { l: "J'accompagne un parent qui vieillit", d: "Je ne veux pas qu'on ait à deviner un jour." },
+    parent:  { l: "J'accompagne mon père ou ma mère qui vieillit", d: "Je ne veux pas qu'on ait à deviner un jour." },
     loss:    { l: "Nous avons perdu quelqu'un récemment", d: "Je porte ce que cela m'a appris." },
     moving:  { l: "Notre vie s'étend sur plusieurs pays", d: "Des personnes, des papiers ou des biens en plusieurs endroits." }
   },
 
   whoEyebrow: "Ensuite", whoTitle: "Qui fait partie de votre monde ?", whoSub: "Choisissez tout ce qui s'applique.",
   hh: {
-    partner: "Mon / ma partenaire", children: "Des enfants", pets: "Des animaux",
-    elders: "Des parents ou des aînés", faraway: "Quelqu'un au loin qui dépend de moi"
+    partner: "Mon / ma / mes partenaire(s)", children: "Des enfants", pets: "Des animaux",
+    elders: "Mon père, ma mère ou des aînés", faraway: "Quelqu'un au loin qui dépend de moi"
   },
 
   cEyebrow: "Puis", cTitle: "Votre vie familiale s'étend-elle sur plusieurs pays ?",
@@ -538,7 +579,7 @@ fr: {
   tEyebrow: "La conversation", tTitle: "Une conversation, rendue plus simple.",
   tSub: "Choisissez à qui parler d'abord, et sa réaction probable. Amani vous donnera une ouverture dans la langue de votre famille.",
   audLbl: "Je veux parler avec…",
-  aud: { partner: "Mon / ma partenaire", parent: "Un parent", sibling: "Un frère ou une sœur", adultchild: "Mon enfant adulte", friend: "Un ami de confiance" },
+  aud: { partner: "Mon / ma partenaire", parent: "Mon père ou ma mère", sibling: "Un frère ou une sœur", adultchild: "Mon enfant adulte", friend:"Un ami de confiance" },
   reaLbl: "Il ou elle va probablement…",
   rea: {
     open: "être ouvert(e)", avoid: "éviter les sujets lourds", name: "dire « ne parle pas de malheur »",
@@ -567,6 +608,17 @@ fr: {
   },
   askWrap: "Est-ce qu'on peut prendre dix minutes ce week-end pour {ask} ? Juste ça.",
   pauseLine: "Et si ça devient trop, on s'arrête et on y revient un autre jour.",
+  lead: {
+    parent: "J'aimerais avoir votre avis sur quelque chose.",
+    adultchild: "Je voudrais te simplifier les choses, quoi qu'il arrive."
+  },
+  /* vouvoiement variants — used when the audience is "a parent" (the only strings that say tu) */
+  rsrV: { direct: "Rien de grave. C'est pratique, pas sombre — c'est pour que vous n'ayez jamais à deviner ou chercher dans le stress." },
+  resV: {
+    name:      "« Je vous entends. On n'a même pas besoin de le nommer. Appelons ça une protection de famille — comme une assurance, ou savoir qui appeler. Deux noms et un endroit, c'est tout. »",
+    busy:      "« Je vous envoie trois petites questions — répondez par note vocale quand vous avez une minute cette semaine. »",
+    emotional: "« C'est normal si ça remue. On va aussi lentement que vous voulez — et on s'arrête quand vous le dites. »"
+  },
   asks: {
     calm:    "choisir la personne qu'on voudrait qu'on appelle en premier",
     kids:    "noter deux personnes à qui on confierait les enfants",
@@ -596,6 +648,7 @@ fr: {
     moving:  { t: "Cartographier par pays", d: "Listez ce qui se trouve dans chaque pays : pièces d'identité, titres de propriété, comptes, papiers de famille." }
   },
   markDone: "Marquer comme fait", doneRitual: "Un geste de soin, accompli.",
+  wkFill: "Envie de le faire maintenant ? Cela va directement sur votre page.",
 
   gEyebrow: "Vos biens", gTitle: "Ce qui existe — et où sont les papiers.",
   gSub: "Touchez pour ajouter ce qui existe. Un mot pour le décrire, et où se trouvent ses papiers ou sa preuve. Pas de montants, pas de numéros de compte.",
@@ -609,6 +662,16 @@ fr: {
   gRemove: "Retirer",
   gHint: "Pourquoi ni montants ni numéros ? Les montants changent, et cette note peut voyager. Ce dont votre famille a besoin un jour difficile, c'est de savoir qu'une chose existe et où se trouve sa preuve — les chiffres exacts restent avec vous et, un jour, avec votre professionnel.",
   gNote: "Ce qui existe, et où sont les papiers", gPapers: "papiers :",
+
+  wlEyebrow: "Un testament", wlQ: "Avez-vous fait un testament ?",
+  wlYes: "Oui", wlNotYet: "Pas encore", wlUnsure: "Pas sûr(e)", wlNo: "Non",
+  wlWhere: "Où se trouve l'original ?", wlWherePh: "ex. chez le notaire · dans le coffre familial · chez mon avocat",
+  wlHolder: "Qui le détient ?", wlHolderPh: "Un nom — ou un rôle, comme « mon avocat »",
+  wlHeirQ: "Cette personne fait-elle partie des héritiers ?",
+  wlHint: "Où il se trouve et qui l'a — jamais ce qu'il dit.",
+  wlHeirFlag: "Bon à savoir : si le seul exemplaire est gardé par une personne qui figure parmi les héritiers, des doutes peuvent naître plus tard. Beaucoup de familles demandent à un notaire ou à un avocat de garder l'original — un professionnel peut vous dire ce qui convient là où vous vivez et là où se trouvent vos biens.",
+  wlHandoff: "Bon à savoir : les règles d'un testament valable varient d'un pays à l'autre, et une erreur de forme peut le rendre invalide. Un notaire ou un avocat peut vous dire ce qui s'applique dans votre cas — et votre note rassemble déjà ce qu'il faudra lui montrer.",
+  nWill: "Testament", nWillOrig: "original :", nWillHeld: "détenu par",
 
   nEyebrow: "Votre page", nTitle: "La Note de Protection Familiale",
   nSub: "Une page. Des noms, des endroits, et ce qui compte — jamais de mots de passe. Imprimez-la, ou envoyez-la en message.",
@@ -633,8 +696,8 @@ fr: {
   hub: {
     c1: { t: "Les personnes que je protège", d: "Un premier choix et un remplaçant pour chacun de ceux qui dépendent de vous — et s'ils sont au courant." },
     c2: { t: "Notre clé d'urgence", d: "Qui peut accéder au téléphone et aux e-mails si vous ne pouvez pas — sans le moindre mot de passe." },
-    c3: { t: "La carte du foyer", d: "Ce qui existe et où sont les papiers." },
-    c4: { t: "Ce qui compte pour moi", d: "Confort, dignité — et quelques mots pour quelqu'un que vous aimez." },
+    c3: { t: "La carte du foyer", d: "Ce qui existe, où sont les papiers — et où se trouve un testament." },
+    c4: { t: "Ce qui compte pour moi", d: "Confort, dignité, vos souhaits pour l'adieu — et quelques mots pour quelqu'un que vous aimez." },
     c5: { t: "Garder la note vivante", d: "Un rendez-vous annuel, dans votre propre calendrier." }
   },
   statusNone: "Pas commencé", entriesLbl: "entrées", setLbl: "fait",
@@ -654,11 +717,22 @@ fr: {
   ch4Q: "Si la vie devenait dure un temps, que voudraient dire confort et dignité pour vous ?",
   ch4QPh: "Avec vos mots — il n'y a pas de bonne réponse.",
   ch4Words: "Quelques mots pour quelqu'un", ch4To: "Pour qui ?", ch4Text: "Une phrase sincère suffit.",
+  ch4Farewell: "Où et comment je voudrais reposer ou être honoré(e)",
+  ch4FarewellPh: "ex. inhumé(e) dans notre village d'origine, près de ma mère · prières dirigées par mon frère · ma famille le sait déjà",
+  ch4FarewellHint: "Seulement si vous le souhaitez. Cela aide surtout votre famille quand elle le sait déjà.",
   ch5Ics: "Ajouter ma date de révision à mon calendrier", ch5Mark: "Marquer comme révisé aujourd'hui", ch5Last: "Dernière révision",
   ch5Triggers: "À refaire après : une naissance · un déménagement · un mariage ou une séparation · un terrain ou un bien nouveau · un nouveau pays · un deuil.",
+  impBtn: "Restaurer depuis une sauvegarde",
+  impAsk: "Remplacer tout ce qui est sur ce téléphone par cette sauvegarde ? C'est irréversible.",
+  impYes: "Remplacer", impNo: "Annuler",
+  impBad: "Ce fichier n'est pas une sauvegarde Amani, ou il est endommagé. Rien n'a été modifié.",
+  impBig: "Ce fichier est trop volumineux pour être une sauvegarde. Rien n'a été modifié.",
+  impDone: "Restauré. Tout ce qui figurait dans votre sauvegarde est de retour sur ce téléphone.",
+  ch5Data: "Télécharger mes données (sauvegarde)",
+  ch5DataHint: "Une copie de tout ce que vous avez saisi, dans un fichier. Il contient ce que vous avez écrit — après l'avoir enregistré, déplacez-le hors du dossier Téléchargements, dans un endroit privé.",
   icsSummary: "Amani — révision familiale",
   nGuard: "Qui prend le relais pour ceux que je protège", nEkey: "Notre clé d'urgence",
-  nCare: "Confort et dignité, avec mes mots", nWords: "Des mots pour",
+  nCare: "Confort et dignité, avec mes mots", nFarewell: "Mes souhaits pour l'adieu", nWords: "Des mots pour",
   tickTold: "au courant", tickNotTold: "pas encore dit",
   toNote: "Revenir à ma note"
 }
@@ -667,6 +741,7 @@ fr: {
 /* ---------- state ---------- */
 var ORDER = ["welcome","context","household","countries","register","values","talk","week","things","note","path"];
 var GENTLE = { loss: true, illness: true };
+var importPending = null, importMsg = "";
 
 function defaultState(lang) {
   return {
@@ -676,7 +751,8 @@ function defaultState(lang) {
     audience: null, reaction: null,
     weekDone: false, assets: [], guardians: [],
     ekey: { device: false, email: false, where: "" },
-    care: "", words: { to: "", text: "" }, lastReview: "",
+    care: "", farewell: "", words: { to: "", text: "" }, lastReview: "",
+    will: { has: null, where: "", holder: "", heir: null },
     note: { by: "", call: "", speak: "", where: "" },
     review: "",
     _resume: null
@@ -689,6 +765,8 @@ if (!state.guardians) state.guardians = [];
 if (!state.ekey) state.ekey = { device: false, email: false, where: "" };
 if (!state.words) state.words = { to: "", text: "" };
 if (state.care === undefined) state.care = "";
+if (state.farewell === undefined) state.farewell = "";
+if (!state.will) state.will = { has: null, where: "", holder: "", heir: null };
 if (state.lastReview === undefined) state.lastReview = "";
 if (state.screen && state.screen !== "welcome") {
   state._resume = state.screen;
@@ -710,7 +788,7 @@ function esc(s) {
 }
 
 /* ---------- navigation ---------- */
-function go(screen) { state.screen = screen; save(); render(); window.scrollTo(0, 0); }
+function go(screen) { importPending = null; importMsg = ""; state.screen = screen; save(); render(); window.scrollTo(0, 0); }
 function next() { var i = ORDER.indexOf(state.screen); if (i < ORDER.length - 1) go(ORDER[i + 1]); }
 function back() { var i = ORDER.indexOf(state.screen); if (i > 0) go(ORDER[i - 1]); }
 function setLang(l) { state.lang = l; save(); render(); }
@@ -746,6 +824,10 @@ function removeGuardian(i) { state.guardians.splice(i, 1); save(); render(); }
 function toggleEkey(k) { state.ekey[k] = !state.ekey[k]; save(); render(); }
 function setEkeyWhere(v) { state.ekey.where = v; save(); }
 function setCare(v) { state.care = v; save(); }
+function setFarewell(v) { state.farewell = v; save(); }
+function pickWill(v) { state.will.has = v; save(); render(); }
+function pickHeir(v) { state.will.heir = v; save(); render(); }
+function setWill(k, v) { state.will[k] = v; save(); }
 function setWords(k, v) { state.words[k] = v; save(); }
 function markReviewedToday() { state.lastReview = new Date().toISOString().slice(0, 10); save(); render(); }
 function downloadIcs() {
@@ -759,11 +841,92 @@ function downloadIcs() {
     "RRULE:FREQ=YEARLY", "SUMMARY:" + L.icsSummary,
     "END:VEVENT", "END:VCALENDAR"
   ].join("\r\n");
-  var blob = new Blob([ics], { type: "text/calendar" });
+  saveFile("amani-review.ics", "text/calendar", ics);
+}
+function saveFile(name, type, text) {
+  var blob = new Blob([text], { type: type });
   var a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "amani-review.ics";
+  a.download = name;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+function downloadData() {
+  var d = JSON.parse(JSON.stringify(state));
+  delete d._resume;
+  saveFile("notes-backup-" + new Date().toISOString().slice(0, 10) + ".json", "application/json", JSON.stringify(d, null, 2));
+}
+/* Restore: the file is untrusted input. Nothing is copied over as-is — every field is rebuilt from a whitelist. */
+function cleanBackup(o) {
+  if (!o || typeof o !== "object" || Array.isArray(o) || !Array.isArray(o.household) || !o.note || typeof o.note !== "object") throw new Error("shape");
+  var E = T.en, d = defaultState(o.lang === "fr" ? "fr" : "en");
+  function str(v) { return typeof v === "string" ? v.slice(0, 5000) : ""; }
+  function day(v) { return typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : ""; }
+  function key(v, group) { return typeof v === "string" && Object.prototype.hasOwnProperty.call(group, v) ? v : null; }
+  function keys(a, group, max) {
+    var out = [];
+    (Array.isArray(a) ? a : []).forEach(function (v) { if (key(v, group) && out.indexOf(v) < 0 && out.length < max) out.push(v); });
+    return out;
+  }
+  function pick(v, opts) { return opts.indexOf(v) >= 0 ? v : null; }
+  var YNU = ["yes", "no", "unsure"];
+  d.context = key(o.context, E.ctx);
+  d.household = keys(o.household, E.hh, 20);
+  d.multi = pick(o.multi, ["yes", "no"]);
+  d.countries = str(o.countries);
+  d.register = key(o.register, E.reg);
+  d.values = keys(o.values, E.val, 3);
+  d.audience = key(o.audience, E.aud);
+  d.reaction = key(o.reaction, E.rea);
+  d.weekDone = o.weekDone === true;
+  d.assets = (Array.isArray(o.assets) ? o.assets : []).slice(0, 200).map(function (a) {
+    a = a || {}; return { type: key(a.type, E.ast) || "other", label: str(a.label), where: str(a.where) };
+  });
+  d.guardians = (Array.isArray(o.guardians) ? o.guardians : []).slice(0, 200).map(function (g) {
+    g = g || {}; return { who: str(g.who), first: str(g.first), backup: str(g.backup), told: g.told === true };
+  });
+  var ek = o.ekey || {}; d.ekey = { device: ek.device === true, email: ek.email === true, where: str(ek.where) };
+  d.care = str(o.care); d.farewell = str(o.farewell);
+  var w = o.words || {}; d.words = { to: str(w.to), text: str(w.text) };
+  d.lastReview = day(o.lastReview); d.review = day(o.review);
+  var n = o.note; d.note = { by: str(n.by), call: str(n.call), speak: str(n.speak), where: str(n.where) };
+  var wl = o.will || {}; d.will = { has: pick(wl.has, ["yes", "no"]), where: str(wl.where), holder: str(wl.holder), heir: pick(wl.heir, YNU) };
+  d.screen = "chap5"; d._resume = null;
+  return d;
+}
+function pickBackup(input) {
+  var f = input && input.files && input.files[0];
+  importPending = null; importMsg = "";
+  if (!f) { render(); return; }
+  if (f.size > 1000000) { importMsg = "impBig"; render(); return; }
+  var r = new FileReader();
+  r.onload = function () {
+    try { importPending = cleanBackup(JSON.parse(String(r.result))); } catch (e) { importMsg = "impBad"; }
+    render();
+  };
+  r.onerror = function () { importMsg = "impBad"; render(); };
+  r.readAsText(f);
+}
+function confirmImport() {
+  if (!importPending) return;
+  state = importPending; importPending = null; importMsg = "impDone";
+  save(); render(); window.scrollTo(0, 0);
+}
+function cancelImport() { importPending = null; importMsg = ""; render(); }
+function willSummary() {
+  var L = t(), w = state.will;
+  if (w.has === "yes") {
+    var s = L.wlYes;
+    if (w.where) s += " — " + L.nWillOrig + " " + w.where;
+    if (w.holder) s += " · " + L.nWillHeld + " " + w.holder;
+    return s;
+  }
+  if (w.has === "no") return L.wlNotYet;
+  return "";
+}
+function willFlag() {
+  var L = t(), w = state.will;
+  if (w.has === "yes") return w.heir === "yes" ? L.wlHeirFlag : "";
+  return w.has === "no" ? L.wlHandoff : "";
 }
 function setNote(k, v) { state.note[k] = v; save(); }
 function setReview(v) { state.review = v; save(); }
@@ -783,12 +946,16 @@ function buildScript() {
   var reg = state.register || "gentle";
   var parts = [
     L.trg[ctx],
-    L.rsr[reg],
+    rsrText(reg),
     L.askWrap.replace("{ask}", L.asks[ctx]),
     L.pauseLine
   ];
+  if (L.lead[state.audience]) parts.unshift(L.lead[state.audience]);
   return parts.join(" ");
 }
+function formal() { return state.lang === "fr" && state.audience === "parent"; }
+function rsrText(reg) { var L = t(); return (formal() && L.rsrV && L.rsrV[reg]) || L.rsr[reg]; }
+function resText(rea) { var L = t(); return (formal() && L.resV && L.resV[rea]) || L.res[rea]; }
 function nextQuestion() {
   var L = t();
   if (state.context === "kids") return L.nQkids;
@@ -830,10 +997,12 @@ function noteAsText() {
       lines.push(s2);
     });
   }
+  if (willSummary()) lines.push(L.nWill + ": " + willSummary() + (willFlag() ? " — " + willFlag() : ""));
   if (state.multi === "yes" && state.countries) lines.push(L.nCountries + ": " + state.countries + " — " + L.cFlag);
   lines.push(L.nStep + ": " + L.task[state.context || "calm"].t + (state.weekDone ? " ✓" : ""));
   lines.push(L.nQ + ": " + nextQuestion());
   if (state.care) lines.push(L.nCare + ": " + state.care);
+  if (state.farewell) lines.push(L.nFarewell + ": " + state.farewell);
   if (state.words.text) lines.push(L.nWords + " " + (state.words.to || "…") + ": " + state.words.text);
   if (state.review) lines.push(L.nReview + " " + state.review + (state.lastReview ? " · " + L.ch5Last + " : " + state.lastReview : ""));
   lines.push(L.sheetFoot);
@@ -905,12 +1074,28 @@ function sWelcome() {
     btns = '<button class="btn" onclick="next()">' + esc(L.begin) + "</button>" +
       '<button class="btn-ghost" onclick="eraseAll()">' + esc(L.erase) + "</button>";
   }
+  var tips = "";
+  if (state._resume) tips += '<p class="aside">' + esc(L.sharedHint) + "</p>";
+  if (isTouchBrowser()) tips += '<p class="aside">' + esc(L.a2hs) + "</p>";
   return '<div class="screen">' +
     "<h1>" + esc(L.wTitle) + "</h1>" +
     '<p style="font-size:18px">' + esc(L.wLaw) + "</p>" +
     '<p class="sub">' + esc(L.wSub) + "</p>" +
     '<div class="btnrow">' + btns + "</div>" +
+    tips +
     "</div>";
+}
+function isTouchBrowser() {
+  try {
+    var standalone = window.navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+    return !standalone && window.matchMedia("(pointer: coarse)").matches;
+  } catch (e) { return false; }
+}
+function contactFields() {
+  var L = t(), h = "";
+  h += '<label class="f">' + esc(L.nCall) + '<input type="text" value="' + esc(state.note.call) + '" placeholder="' + esc(L.nCallPh) + '" oninput="setNote(\'call\', this.value)"></label>';
+  h += '<label class="f">' + esc(L.nSpeak) + '<input type="text" value="' + esc(state.note.speak) + '" placeholder="' + esc(L.nSpeakPh) + '" oninput="setNote(\'speak\', this.value)"></label>';
+  return h;
 }
 
 function thingsBody() {
@@ -942,6 +1127,7 @@ function sThings() {
   h += '<div class="eyebrow">' + esc(L.gEyebrow) + "</div><h2>" + esc(L.gTitle) + "</h2>";
   h += '<p class="sub">' + esc(L.gSub) + "</p>";
   h += thingsBody();
+  h += willBody();
   h += navRow(true) + "</div>";
   return h;
 }
@@ -1027,17 +1213,17 @@ function sTalk() {
       '" onclick="pickRea(\'' + r + "')\">" + esc(L.rea[r]) + "</button>";
   }
   h += "</div>";
-  if (state.audience && state.reaction) {
+  if (state.reaction) {
     h += '<div class="resist"><span class="lbl">' + esc(L.scriptLbl) + "</span></div>";
     h += '<div class="scriptbox">' + esc(buildScript()) + "</div>";
     h += '<div class="resist"><span class="lbl">' + esc(L.ifResist) + "</span>" +
-      "<p style=\"margin:0\">" + esc(L.res[state.reaction]) + "</p></div>";
+      "<p style=\"margin:0\">" + esc(resText(state.reaction)) + "</p></div>";
     h += '<div class="btnrow no-print">' +
       '<button class="btn wa" onclick="shareWA(\'script\')">' + esc(L.waShare) + "</button>" +
       '<button class="btn-ghost" id="copyScriptBtn" onclick="copyScript()">' + esc(L.copyScript) + "</button></div>";
     h += '<p class="aside">' + esc(L.asyncHint) + "</p>";
   }
-  h += navRow(!!(state.audience && state.reaction)) + "</div>";
+  h += navRow(!!state.reaction) + "</div>";
   return h;
 }
 
@@ -1048,7 +1234,9 @@ function sWeek() {
   h += '<div class="task"><h3>' + esc(L.task[ctx].t) + "</h3><p>" + esc(L.task[ctx].d) + "</p>";
   if (state.weekDone) h += '<p class="ritual">' + esc(L.doneRitual) + "</p>";
   else h += '<div class="btnrow"><button class="btn-ghost" onclick="markWeekDone()">' + esc(L.markDone) + "</button></div>";
-  h += "</div>" + navRow(true) + "</div>";
+  h += "</div>";
+  if (!GENTLE[state.context]) h += '<p class="sub" style="margin-bottom:12px">' + esc(L.wkFill) + "</p>" + contactFields();
+  h += navRow(true) + "</div>";
   return h;
 }
 
@@ -1059,11 +1247,10 @@ function sNote() {
 
   h += '<div class="no-print">';
   h += '<label class="f">' + esc(L.nBy) + '<input type="text" value="' + esc(state.note.by) + '" oninput="setNote(\'by\', this.value)"></label>';
-  h += '<label class="f">' + esc(L.nCall) + '<input type="text" value="' + esc(state.note.call) + '" placeholder="' + esc(L.nCallPh) + '" oninput="setNote(\'call\', this.value)"></label>';
-  h += '<label class="f">' + esc(L.nSpeak) + '<input type="text" value="' + esc(state.note.speak) + '" placeholder="' + esc(L.nSpeakPh) + '" oninput="setNote(\'speak\', this.value)"></label>';
+  h += contactFields();
   h += '<label class="f">' + esc(L.nWhere) + '<textarea placeholder="' + esc(L.nWherePh) + '" oninput="setNote(\'where\', this.value)">' + esc(state.note.where) + "</textarea>" +
     '<span class="hint">' + esc(L.nWhereHint) + "</span></label>";
-  h += '<label class="f">' + esc(L.nReview) + '<input type="date" value="' + esc(state.review) + '" oninput="setReview(this.value)"></label>';
+  h += '<label class="f">' + esc(L.nReview) + '<input type="date" value="' + esc(state.review) + '" oninput="setReview(this.value)" onchange="setReview(this.value); render()"></label>';
   h += "</div>";
 
   h += '<div class="sheet" id="sheet">';
@@ -1106,6 +1293,10 @@ function sNote() {
     });
     h += '<div class="row"><span class="k">' + esc(L.gNote) + '</span><span class="v">' + alines.join("<br>") + "</span></div>";
   }
+  if (willSummary()) {
+    h += '<div class="row"><span class="k">' + esc(L.nWill) + '</span><span class="v">' + esc(willSummary()) + "</span>" +
+      (willFlag() ? '<div class="flag">' + esc(willFlag()) + "</div>" : "") + "</div>";
+  }
   if (state.multi === "yes" && state.countries) {
     h += '<div class="row"><span class="k">' + esc(L.nCountries) + '</span><span class="v">' + esc(state.countries) + "</span>" +
       '<div class="flag">' + esc(L.cFlag) + "</div></div>";
@@ -1113,6 +1304,7 @@ function sNote() {
   h += '<div class="row"><span class="k">' + esc(L.nStep) + '</span><span class="v">' + esc(L.task[ctx].t) + (state.weekDone ? " ✓" : "") + "</span></div>";
   h += '<div class="row"><span class="k">' + esc(L.nQ) + '</span><span class="v">' + esc(nextQuestion()) + "</span></div>";
   if (state.care) h += '<div class="row"><span class="k">' + esc(L.nCare) + '</span><span class="v">' + esc(state.care) + "</span></div>";
+  if (state.farewell) h += '<div class="row"><span class="k">' + esc(L.nFarewell) + '</span><span class="v">' + esc(state.farewell) + "</span></div>";
   if (state.words.text) h += '<div class="row"><span class="k">' + esc(L.nWords + " " + (state.words.to || "…")) + '</span><span class="v">' + esc(state.words.text) + "</span></div>";
   if (state.review) h += '<div class="row"><span class="k">' + esc(L.nReview) + '</span><span class="v">' + esc(state.review) +
     (state.lastReview ? " · " + esc(L.ch5Last) + " : " + esc(state.lastReview) : "") + "</span></div>";
@@ -1138,8 +1330,11 @@ function chapterStatus(key) {
     var n = (state.ekey.device ? 1 : 0) + (state.ekey.email ? 1 : 0);
     return (n || state.ekey.where) ? n + "/2 " + L.setLbl + (state.ekey.where ? " ✓" : "") : L.statusNone;
   }
-  if (key === "c3") return state.assets.length ? state.assets.length + " " + L.entriesLbl : L.statusNone;
-  if (key === "c4") return (state.care || state.words.text) ? "✓" : L.statusNone;
+  if (key === "c3") {
+    var n3 = state.assets.length + (state.will.has ? 1 : 0);
+    return n3 ? n3 + " " + L.entriesLbl : L.statusNone;
+  }
+  if (key === "c4") return (state.care || state.farewell || state.words.text) ? "✓" : L.statusNone;
   if (key === "c5") return state.lastReview ? (L.ch5Last + " " + state.lastReview) : (state.review || L.statusNone);
   return "";
 }
@@ -1212,7 +1407,30 @@ function sChap3() {
   h += '<div class="eyebrow">' + esc(L.pEyebrow) + "</div><h2>" + esc(L.gTitle) + "</h2>";
   h += '<p class="sub">' + esc(L.gSub) + "</p>";
   h += thingsBody();
+  h += willBody();
   h += hubNav() + "</div>";
+  return h;
+}
+
+function willChip(sel, onclick, label) {
+  return '<button class="chip' + (sel ? " sel" : "") + '" onclick="' + onclick + '">' + esc(label) + "</button>";
+}
+function willBody() {
+  var L = t(), w = state.will, h = "";
+  h += '<div class="eyebrow" style="margin-top:28px">' + esc(L.wlEyebrow) + "</div>";
+  h += '<label class="f">' + esc(L.wlQ) + '</label><div class="chips c2">' +
+    willChip(w.has === "yes", "pickWill('yes')", L.wlYes) +
+    willChip(w.has === "no", "pickWill('no')", L.wlNotYet) + "</div>";
+  if (w.has === "yes") {
+    h += '<label class="f">' + esc(L.wlWhere) + '<input type="text" value="' + esc(w.where) + '" placeholder="' + esc(L.wlWherePh) + '" oninput="setWill(\'where\', this.value)"></label>';
+    h += '<label class="f">' + esc(L.wlHolder) + '<input type="text" value="' + esc(w.holder) + '" placeholder="' + esc(L.wlHolderPh) + '" oninput="setWill(\'holder\', this.value)">' +
+      '<span class="hint">' + esc(L.wlHint) + "</span></label>";
+    h += '<label class="f">' + esc(L.wlHeirQ) + '</label><div class="chips c3">' +
+      willChip(w.heir === "yes", "pickHeir('yes')", L.wlYes) +
+      willChip(w.heir === "no", "pickHeir('no')", L.wlNo) +
+      willChip(w.heir === "unsure", "pickHeir('unsure')", L.wlUnsure) + "</div>";
+  }
+  if (willFlag()) h += '<div class="gentle">' + esc(willFlag()) + "</div>";
   return h;
 }
 
@@ -1222,6 +1440,9 @@ function sChap4() {
   h += '<p class="sub">' + esc(L.hub.c4.d) + "</p>";
   h += '<label class="f">' + esc(L.ch4Q) +
     '<textarea placeholder="' + esc(L.ch4QPh) + '" oninput="setCare(this.value)">' + esc(state.care) + "</textarea></label>";
+  h += '<label class="f">' + esc(L.ch4Farewell) +
+    '<textarea placeholder="' + esc(L.ch4FarewellPh) + '" oninput="setFarewell(this.value)">' + esc(state.farewell) + "</textarea>" +
+    '<span class="hint">' + esc(L.ch4FarewellHint) + "</span></label>";
   h += '<label class="f">' + esc(L.ch4Words) +
     '<input type="text" value="' + esc(state.words.to) + '" placeholder="' + esc(L.ch4To) + '" oninput="setWords(\'to\',this.value)">' +
     '<textarea placeholder="' + esc(L.ch4Text) + '" oninput="setWords(\'text\',this.value)">' + esc(state.words.text) + "</textarea></label>";
@@ -1234,13 +1455,24 @@ function sChap5() {
   h += '<div class="eyebrow">' + esc(L.pEyebrow) + "</div><h2>" + esc(L.hub.c5.t) + "</h2>";
   h += '<p class="sub">' + esc(L.hub.c5.d) + "</p>";
   h += '<label class="f">' + esc(L.nReview) +
-    '<input type="date" value="' + esc(state.review) + '" oninput="setReview(this.value)"></label>';
+    '<input type="date" value="' + esc(state.review) + '" oninput="setReview(this.value)" onchange="setReview(this.value); render()"></label>';
   h += '<div class="btnrow no-print">';
   h += '<button class="btn" onclick="downloadIcs()"' + (state.review ? "" : " disabled") + ">" + esc(L.ch5Ics) + "</button>";
   h += '<button class="btn-ghost" onclick="markReviewedToday()">' + esc(L.ch5Mark) + "</button>";
   h += "</div>";
   if (state.lastReview) h += '<p class="ritual">' + esc(L.ch5Last) + " : " + esc(state.lastReview) + " — " + esc(L.doneRitual) + "</p>";
   h += '<p class="aside">' + esc(L.ch5Triggers) + "</p>";
+  h += '<div class="btnrow no-print"><button class="btn-ghost" onclick="downloadData()">' + esc(L.ch5Data) + "</button></div>";
+  h += '<p class="aside">' + esc(L.ch5DataHint) + "</p>";
+  h += '<div class="btnrow no-print"><button class="btn-ghost" onclick="document.getElementById(\'backupFile\').click()">' + esc(L.impBtn) + "</button></div>";
+  h += '<input type="file" id="backupFile" style="display:none" onchange="pickBackup(this)">';
+  if (importPending) {
+    h += '<div class="gentle">' + esc(L.impAsk) + "</div>";
+    h += '<div class="btnrow no-print"><button class="btn" onclick="confirmImport()">' + esc(L.impYes) + "</button>" +
+      '<button class="btn-ghost" onclick="cancelImport()">' + esc(L.impNo) + "</button></div>";
+  } else if (importMsg) {
+    h += '<div class="gentle">' + esc(L[importMsg]) + "</div>";
+  }
   h += hubNav() + "</div>";
   return h;
 }
